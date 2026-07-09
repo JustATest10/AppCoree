@@ -392,6 +392,32 @@
             cursor: default;
         }
 
+        .mic-level-wrap {
+            width: 220px;
+            max-width: 80%;
+            height: 10px;
+            margin: 10px auto 0;
+            background: rgba(255,255,255,0.12);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .mic-level-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #4caf50, #ffeb3b, #e94560);
+            transition: width 0.06s linear;
+        }
+
+        .mic-level-label {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
         .mic-status {
             min-height: 1.2em;
             margin-top: 8px;
@@ -2339,8 +2365,11 @@ function renderWordDisplay() {
             <div class="mic-row">
                 <button class="mic-btn" id="mic-btn" onclick="startPronunciationCheck()">🎤 Parler</button>
             </div>
+            <div class="mic-level-wrap"><div class="mic-level-bar" id="mic-level-bar"></div></div>
+            <div class="mic-level-label">Niveau du micro (test)</div>
             <div class="mic-status" id="mic-status"></div>
         `;
+        startMicLevelMeter();
     }
 }
 
@@ -2457,16 +2486,98 @@ function showAudioNotice(msg) {
 // MODE 4 : VÉRIFICATION DE LA PRONONCIATION (reconnaissance vocale)
 // ============================================================
 let recognition = null;
+let micSilenceTimeout = null;
 
 function getSpeechRecognitionClass() {
     return window.SpeechRecognition || window.webkitSpeechRecognition || null;
 }
 
 function stopRecognition() {
+    if (micSilenceTimeout) {
+        clearTimeout(micSilenceTimeout);
+        micSilenceTimeout = null;
+    }
     if (recognition) {
         try { recognition.onresult = null; recognition.onerror = null; recognition.onend = null; recognition.abort(); } catch (e) {}
         recognition = null;
     }
+    stopMicLevelMeter();
+}
+
+// ------------------------------------------------------------
+// Barre de niveau du micro (indépendante de SpeechRecognition)
+// Sert à vérifier que le micro capte bien du son, même si la
+// reconnaissance vocale elle-même échoue (ex: erreur "network").
+// ------------------------------------------------------------
+let micLevelStream = null;
+let micLevelAudioCtx = null;
+let micLevelAnalyser = null;
+let micLevelRAF = null;
+
+function stopMicLevelMeter() {
+    if (micLevelRAF) {
+        cancelAnimationFrame(micLevelRAF);
+        micLevelRAF = null;
+    }
+    if (micLevelStream) {
+        try { micLevelStream.getTracks().forEach(t => t.stop()); } catch (e) {}
+        micLevelStream = null;
+    }
+    if (micLevelAudioCtx) {
+        try { micLevelAudioCtx.close(); } catch (e) {}
+        micLevelAudioCtx = null;
+    }
+    micLevelAnalyser = null;
+    const bar = document.getElementById('mic-level-bar');
+    if (bar) bar.style.width = '0%';
+}
+
+async function startMicLevelMeter() {
+    stopMicLevelMeter();
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        return; // pas de support, on laisse la barre à 0 sans bloquer le reste
+    }
+
+    try {
+        micLevelStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+        setMicStatus("⚠️ Micro inaccessible (" + (err.name || err.message || err) + "). Vérifiez l'autorisation du micro pour ce site.");
+        return;
+    }
+
+    // La page a pu changer de mode pendant l'attente de la permission
+    if (currentMode !== 4) {
+        stopMicLevelMeter();
+        return;
+    }
+
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    micLevelAudioCtx = new AudioCtx();
+    const source = micLevelAudioCtx.createMediaStreamSource(micLevelStream);
+    micLevelAnalyser = micLevelAudioCtx.createAnalyser();
+    micLevelAnalyser.fftSize = 512;
+    micLevelAnalyser.smoothingTimeConstant = 0.4;
+    source.connect(micLevelAnalyser);
+
+    const data = new Uint8Array(micLevelAnalyser.frequencyBinCount);
+
+    function update() {
+        if (!micLevelAnalyser) return;
+        micLevelAnalyser.getByteTimeDomainData(data);
+        let sumSquares = 0;
+        for (let i = 0; i < data.length; i++) {
+            const v = (data[i] - 128) / 128;
+            sumSquares += v * v;
+        }
+        const rms = Math.sqrt(sumSquares / data.length);
+        const pct = Math.min(100, Math.round(rms * 100 * 3.5)); // x3.5 pour rendre la barre plus lisible
+        const bar = document.getElementById('mic-level-bar');
+        if (bar) bar.style.width = pct + '%';
+        micLevelRAF = requestAnimationFrame(update);
+    }
+
+    update();
 }
 
 function setMicStatus(msg) {
@@ -2475,7 +2586,7 @@ function setMicStatus(msg) {
 }
 
 function startPronunciationCheck() {
-    if (answered || currentMode !== 4) return;
+    if (currentMode !== 4) return;
 
     const SR = getSpeechRecognitionClass();
     const micBtn = document.getElementById('mic-btn');
@@ -2494,8 +2605,21 @@ function startPronunciationCheck() {
     micBtn.disabled = true;
     micBtn.textContent = '🎙️ Je vous écoute...';
     setMicStatus('');
+    startMicLevelMeter(); // relance la barre de niveau pendant l'écoute
+
+    // Si aucun résultat/erreur ne survient dans les 15s (silence, blocage réseau
+    // silencieux, etc.), on coupe et on prévient qu'il y a un problème.
+    micSilenceTimeout = setTimeout(function () {
+        micSilenceTimeout = null;
+        try { recognition && recognition.abort(); } catch (e) {}
+        recognition = null;
+        micBtn.disabled = false;
+        micBtn.textContent = '🎤 Parler';
+        setMicStatus("⏱️ Aucun son détecté après 15 secondes. Il y a un problème (micro non détecté, permission refusée, ou souci réseau). Vérifiez votre micro et réessayez.");
+    }, 15000);
 
     recognition.onresult = function (e) {
+        if (micSilenceTimeout) { clearTimeout(micSilenceTimeout); micSilenceTimeout = null; }
         const results = e.results[0];
         const alternatives = [];
         for (let i = 0; i < results.length; i++) alternatives.push(results[i].transcript);
@@ -2503,6 +2627,7 @@ function startPronunciationCheck() {
     };
 
     recognition.onerror = function (e) {
+        if (micSilenceTimeout) { clearTimeout(micSilenceTimeout); micSilenceTimeout = null; }
         micBtn.disabled = false;
         micBtn.textContent = '🎤 Parler';
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
@@ -2519,6 +2644,7 @@ function startPronunciationCheck() {
     };
 
     recognition.onend = function () {
+        if (micSilenceTimeout) { clearTimeout(micSilenceTimeout); micSilenceTimeout = null; }
         micBtn.disabled = false;
         micBtn.textContent = '🎤 Parler';
     };
@@ -2526,6 +2652,7 @@ function startPronunciationCheck() {
     try {
         recognition.start();
     } catch (err) {
+        if (micSilenceTimeout) { clearTimeout(micSilenceTimeout); micSilenceTimeout = null; }
         if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
             setMicStatus("⚠️ Impossible de démarrer le micro : cette page doit être servie en HTTPS (ou localhost) pour que le micro fonctionne.");
         } else {
@@ -2542,11 +2669,8 @@ function normalizeKoreanSpeech(str) {
 
 function evaluatePronunciation(alternatives) {
     if (answered || currentMode !== 4) return;
-    answered = true;
-    stats.total++;
 
     stopRecognition();
-    document.getElementById('skip-btn').style.display = 'none';
 
     const target = normalizeKoreanSpeech(currentWord.k);
     const heard = alternatives[0] || '';
@@ -2555,28 +2679,34 @@ function evaluatePronunciation(alternatives) {
     const feedback = document.getElementById('feedback');
 
     if (isCorrect) {
+        answered = true;
+        stats.total++;
         stats.correct++;
+        document.getElementById('skip-btn').style.display = 'none';
         feedback.className = 'feedback correct';
         feedback.innerHTML = `
             <div class="feedback-icon">✅</div>
             <strong>Excellent !</strong> Bonne prononciation !<br>
             <small>Reconnu : "${heard}"</small>
         `;
+        setMicStatus('');
+        document.getElementById('continue-btn').style.display = 'block';
+        updateStats();
     } else {
-        stats.wrong++;
+        // Mauvaise prononciation : on affiche une croix mais on NE bloque PAS
+        // le mot -> l'utilisateur peut réessayer autant de fois qu'il veut.
         feedback.className = 'feedback wrong';
         feedback.innerHTML = `
             <div class="feedback-icon">❌</div>
             <strong>Pas tout à fait !</strong><br>
             Mot attendu : <strong>${currentWord.k}</strong> (${currentWord.r})<br>
             <small>Ce qui a été compris : "${heard || '(rien de compréhensible)'}"</small><br>
-            <small>💡 Réécoutez-vous et réessayez avec le prochain mot. La reconnaissance vocale peut aussi se tromper, ne vous inquiétez pas si vous êtes sûr(e) de votre prononciation.</small>
+            <small>🔁 Réessayez : appuyez à nouveau sur "🎤 Parler".</small>
         `;
+        setMicStatus('');
+        // continue-btn reste caché, skip-btn reste visible : le mot n'est pas
+        // encore validé, on peut réessayer ou changer de mot volontairement.
     }
-
-    setMicStatus('');
-    document.getElementById('continue-btn').style.display = 'block';
-    updateStats();
 }
 
 // ============================================================
