@@ -4,7 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apprendre le Coréen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #F7F3EA;
+            --bg-warm: #FBF8F2;
+            --paper: #FFFFFF;
+            --paper-border: #E7DFCE;
+            --ink: #2B2A28;
+            --ink-soft: #6B6459;
+            --ink-faint: #9B9384;
+            --red: #C23B33;
+            --red-dark: #9E2E27;
+            --red-soft: rgba(194,59,51,0.10);
+            --red-soft-strong: rgba(194,59,51,0.18);
+            --blue: #1B4B91;
+            --blue-soft: #4B72AC;
+            --blue-tint: rgba(27,75,145,0.08);
+            --gold: #C99A3D;
+            --gold-soft: #E8CE8E;
+            --gold-tint: rgba(201,154,61,0.14);
+            --green: #3F8F5F;
+            --green-soft: rgba(63,143,95,0.12);
+            --shadow: rgba(43,42,40,0.10);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,10 +38,12 @@
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Noto Sans KR', 'Segoe UI', sans-serif;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0)),
+                var(--bg);
             min-height: 100vh;
-            color: #fff;
+            color: var(--ink);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,18 +51,39 @@
 
         header {
             width: 100%;
-            padding: 20px;
+            padding: 22px 20px 18px;
             text-align: center;
-            background: rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-warm);
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, var(--blue), var(--red), var(--gold), var(--blue), var(--red)) 1;
+            position: relative;
         }
 
         header h1 {
-            font-size: clamp(1.4rem, 4vw, 2rem);
-            background: linear-gradient(90deg, #e94560, #f5a623);
+            font-family: 'Noto Serif KR', serif;
+            font-weight: 700;
+            font-size: clamp(1.4rem, 4vw, 2.1rem);
+            background: linear-gradient(90deg, var(--red), var(--blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .header-subtitle {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.85rem;
+            color: var(--ink-faint);
+            margin-top: 4px;
+            letter-spacing: 3px;
         }
 
         .mode-selector {
@@ -47,36 +96,40 @@
 
         .mode-btn {
             padding: 12px 20px;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            border: 1.5px solid var(--paper-border);
+            background: var(--paper);
+            color: var(--ink-soft);
             border-radius: 12px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: all 0.25s;
             text-align: center;
+            box-shadow: 0 1px 3px var(--shadow);
         }
 
         .mode-btn:hover {
-            background: rgba(233,69,96,0.3);
-            border-color: #e94560;
+            background: var(--red-soft);
+            border-color: var(--red);
+            color: var(--red-dark);
         }
 
         .mode-btn.active {
-            background: linear-gradient(135deg, #e94560, #c23152);
-            border-color: #e94560;
-            box-shadow: 0 0 20px rgba(233,69,96,0.4);
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
+            border-color: var(--red-dark);
+            color: #fff;
+            box-shadow: 0 4px 14px var(--red-soft-strong);
         }
 
         .main-card {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
+            background: var(--paper);
+            border: 1px solid var(--paper-border);
             border-radius: 20px;
             padding: 30px;
             width: 90%;
             max-width: 600px;
             margin: 10px auto;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 6px 24px var(--shadow);
         }
 
         .word-display {
@@ -85,25 +138,27 @@
         }
 
         .korean-word {
+            font-family: 'Noto Serif KR', serif;
+            font-weight: 700;
             font-size: clamp(2.5rem, 10vw, 4rem);
-            color: #f5a623;
+            color: var(--blue);
             margin-bottom: 8px;
             letter-spacing: 4px;
         }
 
         .translation {
             font-size: 1.1rem;
-            color: #a8d8ea;
+            color: var(--ink-soft);
             margin-bottom: 6px;
         }
 
         .romanization-hint {
             font-size: 0.95rem;
-            color: #ccc;
+            color: var(--ink-faint);
         }
 
         .audio-btn {
-            background: linear-gradient(135deg, #4a90e2, #357abd);
+            background: linear-gradient(135deg, var(--blue), #123a73);
             border: none;
             color: white;
             padding: 12px 24px;
@@ -119,7 +174,7 @@
 
         .audio-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(74,144,226,0.5);
+            box-shadow: 0 5px 20px var(--blue-tint);
         }
 
         .audio-btn-row {
@@ -135,13 +190,13 @@
         }
 
         .audio-btn-slow {
-            background: linear-gradient(135deg, #7a5fd0, #5b3fae);
+            background: linear-gradient(135deg, var(--gold), #a87d24);
             padding: 12px 20px;
             font-size: 0.9rem;
         }
 
         .audio-btn-slow:hover {
-            box-shadow: 0 5px 20px rgba(122,95,208,0.5);
+            box-shadow: 0 5px 20px var(--gold-tint);
         }
 
         .speed-control {
@@ -156,7 +211,7 @@
 
         .speed-control-label {
             font-size: 0.9rem;
-            color: #a8d8ea;
+            color: var(--ink-soft);
         }
 
         .speed-control-row {
@@ -172,7 +227,7 @@
             appearance: none;
             height: 6px;
             border-radius: 4px;
-            background: rgba(255,255,255,0.15);
+            background: var(--paper-border);
             outline: none;
         }
 
@@ -182,9 +237,9 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #7a5fd0, #5b3fae);
+            background: linear-gradient(135deg, var(--gold), #a87d24);
             cursor: pointer;
-            box-shadow: 0 0 8px rgba(122,95,208,0.6);
+            box-shadow: 0 0 8px var(--gold-tint);
         }
 
         .speed-slider::-moz-range-thumb {
@@ -192,9 +247,9 @@
             height: 20px;
             border-radius: 50%;
             border: none;
-            background: linear-gradient(135deg, #7a5fd0, #5b3fae);
+            background: linear-gradient(135deg, var(--gold), #a87d24);
             cursor: pointer;
-            box-shadow: 0 0 8px rgba(122,95,208,0.6);
+            box-shadow: 0 0 8px var(--gold-tint);
         }
 
         .speed-value {
@@ -202,11 +257,11 @@
             text-align: right;
             font-size: 0.9rem;
             font-weight: bold;
-            color: #f5a623;
+            color: var(--blue);
         }
 
         .speed-play-btn {
-            background: linear-gradient(135deg, #7a5fd0, #5b3fae);
+            background: linear-gradient(135deg, var(--gold), #a87d24);
             border: none;
             color: white;
             padding: 10px 18px;
@@ -218,7 +273,7 @@
 
         .speed-play-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(122,95,208,0.5);
+            box-shadow: 0 5px 20px var(--gold-tint);
         }
 
         .input-area {
@@ -228,9 +283,9 @@
         }
 
         .answer-input {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            color: #fff;
+            background: var(--bg-warm);
+            border: 2px solid var(--paper-border);
+            color: var(--ink);
             padding: 14px 18px;
             border-radius: 12px;
             font-size: 1.1rem;
@@ -241,26 +296,26 @@
 
         .answer-input:focus {
             outline: none;
-            border-color: #e94560;
+            border-color: var(--red);
         }
 
         .answer-input[readonly] {
-            background: rgba(255,255,255,0.1);
+            background: var(--bg-warm);
             cursor: default;
         }
 
         .answer-input.correct {
-            border-color: #2ecc71;
-            background: rgba(46,204,113,0.1);
+            border-color: var(--green);
+            background: var(--green-soft);
         }
 
         .answer-input.wrong {
-            border-color: #e74c3c;
-            background: rgba(231,76,60,0.1);
+            border-color: var(--red);
+            background: var(--red-soft);
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #e94560, #c23152);
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
             border: none;
             color: white;
             padding: 14px;
@@ -273,13 +328,13 @@
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(233,69,96,0.5);
+            box-shadow: 0 5px 20px var(--red-soft-strong);
         }
 
         .skip-btn {
             background: transparent;
-            border: 1px solid rgba(255,255,255,0.25);
-            color: #ccc;
+            border: 1px solid var(--paper-border);
+            color: var(--ink-faint);
             padding: 10px 14px;
             border-radius: 12px;
             cursor: pointer;
@@ -290,9 +345,9 @@
         }
 
         .skip-btn:hover {
-            background: rgba(231,76,60,0.15);
-            border-color: #e74c3c;
-            color: #ff8a80;
+            background: var(--red-soft);
+            border-color: var(--red);
+            color: var(--red-dark);
         }
 
         .feedback {
@@ -305,16 +360,16 @@
         }
 
         .feedback.correct {
-            background: rgba(46,204,113,0.2);
-            border: 1px solid #2ecc71;
-            color: #2ecc71;
+            background: var(--green-soft);
+            border: 1px solid var(--green);
+            color: #2c6b45;
             display: block;
         }
 
         .feedback.wrong {
-            background: rgba(231,76,60,0.15);
-            border: 1px solid #e74c3c;
-            color: #ff8a80;
+            background: var(--red-soft);
+            border: 1px solid var(--red);
+            color: var(--red-dark);
             display: block;
         }
 
@@ -324,7 +379,7 @@
         }
 
         .continue-btn {
-            background: linear-gradient(135deg, #27ae60, #1e8449);
+            background: linear-gradient(135deg, var(--green), #2c6b45);
             border: none;
             color: white;
             padding: 14px 30px;
@@ -340,16 +395,16 @@
 
         .continue-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(39,174,96,0.5);
+            box-shadow: 0 5px 20px var(--green-soft);
         }
 
         /* CLAVIER CORÉEN */
         .keyboard-container {
             margin-top: 15px;
-            background: rgba(0,0,0,0.3);
+            background: var(--bg-warm);
             border-radius: 16px;
             padding: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid var(--paper-border);
         }
 
         .keyboard-tabs {
@@ -361,17 +416,17 @@
         .kb-tab {
             padding: 6px 14px;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #ccc;
+            border: 1px solid var(--paper-border);
+            background: var(--paper);
+            color: var(--ink-soft);
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
         }
 
         .kb-tab.active {
-            background: #e94560;
-            border-color: #e94560;
+            background: var(--red);
+            border-color: var(--red-dark);
             color: white;
         }
 
@@ -384,9 +439,9 @@
         }
 
         .key {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
+            background: var(--paper);
+            border: 1px solid var(--paper-border);
+            color: var(--ink);
             padding: 10px 8px;
             border-radius: 8px;
             cursor: pointer;
@@ -398,8 +453,8 @@
         }
 
         .key:hover {
-            background: rgba(233,69,96,0.4);
-            border-color: #e94560;
+            background: var(--red-soft-strong);
+            border-color: var(--red);
         }
 
         .key:active {
@@ -410,7 +465,7 @@
             font-size: 0.75rem;
             padding: 10px 10px;
             min-width: 50px;
-            background: rgba(255,255,255,0.05);
+            background: var(--bg-warm);
         }
 
         .key.space-key {
@@ -420,13 +475,13 @@
         .kb-hint {
             margin-top: 10px;
             font-size: 0.78rem;
-            color: #999;
+            color: var(--ink-faint);
             text-align: center;
             line-height: 1.5;
         }
 
         .kb-hint strong {
-            color: #a8d8ea;
+            color: var(--blue);
         }
 
         .audio-notice {
@@ -434,9 +489,9 @@
             margin-top: 10px;
             padding: 10px 14px;
             font-size: 0.82rem;
-            color: #ffcc80;
-            background: rgba(245,166,35,0.12);
-            border: 1px solid rgba(245,166,35,0.35);
+            color: #8a5a12;
+            background: var(--gold-tint);
+            border: 1px solid var(--gold-soft);
             border-radius: 10px;
             line-height: 1.5;
         }
@@ -448,7 +503,7 @@
         }
 
         .mic-btn {
-            background: linear-gradient(135deg, #e94560, #c23152);
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
             border: none;
             color: white;
             padding: 14px 30px;
@@ -461,7 +516,7 @@
 
         .mic-btn:hover:not(:disabled) {
             transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(233,69,96,0.5);
+            box-shadow: 0 5px 20px var(--red-soft-strong);
         }
 
         .mic-btn:disabled {
@@ -474,24 +529,24 @@
             max-width: 80%;
             height: 10px;
             margin: 10px auto 0;
-            background: rgba(255,255,255,0.12);
+            background: var(--bg-warm);
             border-radius: 6px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid var(--paper-border);
         }
 
         .mic-level-bar {
             height: 100%;
             width: 0%;
             border-radius: 6px;
-            background: linear-gradient(90deg, #4caf50, #ffeb3b, #e94560);
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
             transition: width 0.06s linear;
         }
 
         .mic-level-label {
             text-align: center;
             font-size: 0.75rem;
-            opacity: 0.6;
+            color: var(--ink-faint);
             margin-top: 4px;
         }
 
@@ -500,7 +555,7 @@
             margin-top: 8px;
             padding: 0 10px;
             font-size: 0.85rem;
-            color: #ffcc80;
+            color: #8a5a12;
             text-align: center;
             line-height: 1.5;
         }
@@ -510,25 +565,27 @@
             display: flex;
             gap: 15px;
             padding: 10px 20px;
-            background: rgba(255,255,255,0.04);
+            background: var(--paper);
+            border: 1px solid var(--paper-border);
             border-radius: 12px;
             margin: 0 auto 10px;
             width: 90%;
             max-width: 600px;
             justify-content: center;
             flex-wrap: wrap;
+            box-shadow: 0 1px 3px var(--shadow);
         }
 
         .stat-item {
             text-align: center;
             font-size: 0.85rem;
-            color: #aaa;
+            color: var(--ink-faint);
         }
 
         .stat-value {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #f5a623;
+            color: var(--gold);
         }
 
         .mode-stats-bar {
@@ -538,7 +595,7 @@
 
         .mode-stats-bar .stat-value {
             font-size: 1rem;
-            color: #a8d8ea;
+            color: var(--blue);
         }
 
         .mode-stats-bar .stat-item {
@@ -551,7 +608,7 @@
 
         .global-stats-label {
             font-size: 0.85rem;
-            color: #ddd;
+            color: var(--ink-soft);
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -559,19 +616,19 @@
         }
 
         .pct-green {
-            color: #2ecc71 !important;
+            color: #2c8a4f !important;
         }
 
         .pct-yellow {
-            color: #f1c40f !important;
+            color: #b8860b !important;
         }
 
         .pct-orange {
-            color: #e67e22 !important;
+            color: #c2703a !important;
         }
 
         .pct-red {
-            color: #e74c3c !important;
+            color: var(--red) !important;
         }
 
         /* FILTRE PAR THEME */
@@ -583,9 +640,9 @@
 
         .theme-filter-toggle {
             width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #fff;
+            background: var(--paper);
+            border: 1px solid var(--paper-border);
+            color: var(--ink);
             padding: 10px 16px;
             border-radius: 12px;
             cursor: pointer;
@@ -594,15 +651,16 @@
             align-items: center;
             justify-content: space-between;
             transition: all 0.3s;
+            box-shadow: 0 1px 3px var(--shadow);
         }
 
         .theme-filter-toggle:hover {
-            background: rgba(233,69,96,0.2);
-            border-color: #e94560;
+            background: var(--red-soft);
+            border-color: var(--red);
         }
 
         .theme-filter-summary {
-            color: #a8d8ea;
+            color: var(--blue);
             font-size: 0.8rem;
             margin: 0 8px;
         }
@@ -616,8 +674,8 @@
         }
 
         .theme-filter-panel {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-warm);
+            border: 1px solid var(--paper-border);
             border-radius: 12px;
             margin-top: 8px;
             padding: 14px;
@@ -631,9 +689,9 @@
         }
 
         .theme-filter-actions button {
-            background: rgba(74,144,226,0.2);
-            border: 1px solid #4a90e2;
-            color: #fff;
+            background: var(--blue-tint);
+            border: 1px solid var(--blue);
+            color: var(--blue);
             padding: 6px 12px;
             border-radius: 8px;
             cursor: pointer;
@@ -642,12 +700,12 @@
         }
 
         .theme-filter-actions button:hover {
-            background: rgba(74,144,226,0.4);
+            background: rgba(27,75,145,0.18);
         }
 
         .theme-filter-count {
             font-size: 0.8rem;
-            color: #aaa;
+            color: var(--ink-faint);
             margin-left: auto;
             align-self: center;
         }
@@ -664,32 +722,32 @@
             gap: 6px;
             padding: 6px 10px;
             border-radius: 8px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--paper);
+            border: 1px solid var(--paper-border);
             cursor: pointer;
             font-size: 0.8rem;
-            color: #ddd;
+            color: var(--ink-soft);
             transition: all 0.2s;
             user-select: none;
         }
 
         .theme-chip:hover {
-            border-color: #e94560;
+            border-color: var(--red);
         }
 
         .theme-chip.selected {
-            background: rgba(233,69,96,0.25);
-            border-color: #e94560;
-            color: #fff;
+            background: var(--red-soft-strong);
+            border-color: var(--red);
+            color: var(--red-dark);
         }
 
         .theme-chip input {
-            accent-color: #e94560;
+            accent-color: var(--red);
             cursor: pointer;
         }
 
         .theme-chip .theme-chip-count {
-            color: #888;
+            color: var(--ink-faint);
             font-size: 0.7rem;
             margin-left: auto;
         }
@@ -698,7 +756,7 @@
             width: 90%;
             max-width: 600px;
             height: 6px;
-            background: rgba(255,255,255,0.1);
+            background: var(--paper-border);
             border-radius: 3px;
             margin: 0 auto 10px;
             overflow: hidden;
@@ -706,7 +764,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #e94560, #f5a623);
+            background: linear-gradient(90deg, var(--red), var(--gold));
             border-radius: 3px;
             transition: width 0.4s ease;
         }
@@ -729,11 +787,11 @@
 
         .mode-description {
             text-align: center;
-            color: #aaa;
+            color: var(--ink-soft);
             font-size: 0.9rem;
             margin-bottom: 20px;
             padding: 10px;
-            background: rgba(255,255,255,0.04);
+            background: var(--bg-warm);
             border-radius: 10px;
         }
 
@@ -755,7 +813,10 @@
 <body>
 
 <header>
-    <h1>🇰🇷 Apprendre le Coréen</h1>
+    <div class="header-inner">
+        <h1>Apprendre le Coréen</h1>
+    </div>
+    <div class="header-subtitle">한국어를 배우다</div>
 </header>
 
 <div class="mode-selector">
@@ -2804,7 +2865,7 @@ function renderWordDisplay() {
         desc.textContent = "Lisez le son et écrivez le jamo (voyelle ou consonne) correspondant";
         input.placeholder = "ex: ㅏ, ㄱ...";
         wd.innerHTML = `
-            <div class="korean-word" style="font-size:2.8rem; color:#a8d8ea;">${currentWord.r}</div>
+            <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
             <div class="translation">Tapez la voyelle ou consonne coréenne (jamo) qui correspond à ce son</div>
         `;
     } else if (currentMode === 1) {
@@ -2818,7 +2879,7 @@ function renderWordDisplay() {
         desc.textContent = "Lisez la romanisation et écrivez le mot en hangeul";
         input.placeholder = "Tapez en hangeul...";
         wd.innerHTML = `
-            <div class="korean-word" style="font-size:2rem; color:#a8d8ea;">${currentWord.r}</div>
+            <div class="korean-word" style="font-size:2rem; color:var(--blue);">${currentWord.r}</div>
             <div class="translation">🇫🇷 ${currentWord.f}</div>
         `;
     } else if (currentMode === 3) {
@@ -2829,9 +2890,9 @@ function renderWordDisplay() {
                 <button class="speed-play-btn" onclick="speakWord(parseFloat(document.getElementById('speed-slider').value))">🔊 Écouter</button>
                 <div class="speed-control-label">Vitesse de lecture</div>
                 <div class="speed-control-row">
-                    <span style="font-size:0.8rem; color:#ccc;">0.25x</span>
+                    <span style="font-size:0.8rem; color:var(--ink-faint);">0.25x</span>
                     <input type="range" class="speed-slider" id="speed-slider" min="0.25" max="1" step="0.05" value="1" oninput="updateSpeedLabel(this.value)">
-                    <span style="font-size:0.8rem; color:#ccc;">1x</span>
+                    <span style="font-size:0.8rem; color:var(--ink-faint);">1x</span>
                 </div>
                 <span class="speed-value" id="speed-value">1.00x</span>
             </div>
