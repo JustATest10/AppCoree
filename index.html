@@ -579,6 +579,7 @@
         .stat-item {
             text-align: center;
             font-size: 0.85rem;
+            font-weight: bold;
             color: var(--ink-faint);
         }
 
@@ -789,6 +790,7 @@
             text-align: center;
             color: var(--ink-soft);
             font-size: 0.9rem;
+            font-weight: bold;
             margin-bottom: 20px;
             padding: 10px;
             background: var(--bg-warm);
@@ -839,7 +841,7 @@
 
 <div class="theme-filter-wrap">
     <button class="theme-filter-toggle" onclick="toggleThemeFilter()">
-        <span>🏷️ Thèmes <span class="theme-filter-summary" id="theme-filter-summary">(tous)</span></span>
+        <span>🏷️ <b>Thèmes</b> <span class="theme-filter-summary" id="theme-filter-summary">(tous)</span></span>
         <span class="theme-filter-arrow" id="theme-filter-arrow">▾</span>
     </button>
     <div class="theme-filter-panel" id="theme-filter-panel" style="display:none;">
@@ -2862,11 +2864,10 @@ function renderWordDisplay() {
     const input = document.getElementById('answer-input');
 
     if (currentMode === 0) {
-        desc.textContent = "Lisez le son et écrivez le jamo (voyelle ou consonne) correspondant";
+        desc.textContent = "Tapez la voyelle ou consonne coréenne (jamo) qui correspond à ce son";
         input.placeholder = "ex: ㅏ, ㄱ...";
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
-            <div class="translation">Tapez la voyelle ou consonne coréenne (jamo) qui correspond à ce son</div>
         `;
     } else if (currentMode === 1) {
         desc.textContent = "Lisez le mot coréen et écrivez sa romanisation (sons)";
