@@ -454,6 +454,49 @@
             color: #f5a623;
         }
 
+        .mode-stats-bar {
+            padding: 6px 20px;
+            gap: 10px;
+        }
+
+        .mode-stats-bar .stat-value {
+            font-size: 1rem;
+            color: #a8d8ea;
+        }
+
+        .mode-stats-bar .stat-item {
+            font-size: 0.75rem;
+        }
+
+        .global-stats-bar {
+            align-items: center;
+        }
+
+        .global-stats-label {
+            font-size: 0.85rem;
+            color: #ddd;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .pct-green {
+            color: #2ecc71 !important;
+        }
+
+        .pct-yellow {
+            color: #f1c40f !important;
+        }
+
+        .pct-orange {
+            color: #e67e22 !important;
+        }
+
+        .pct-red {
+            color: #e74c3c !important;
+        }
+
         .progress-bar {
             width: 90%;
             max-width: 600px;
@@ -536,6 +579,34 @@
     </button>
 </div>
 
+<div class="stats-bar mode-stats-bar global-stats-bar">
+    <div class="global-stats-label">Réussite Global :</div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct">0%</div>
+        <div>Total</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-0">0%</div>
+        <div>Mode 0</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-1">0%</div>
+        <div>Mode 1</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-2">0%</div>
+        <div>Mode 2</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-3">0%</div>
+        <div>Mode 3</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-4">0%</div>
+        <div>Mode 4</div>
+    </div>
+</div>
+
 <div class="stats-bar">
     <div class="stat-item">
         <div class="stat-value" id="score-correct">0</div>
@@ -550,8 +621,8 @@
         <div>Total</div>
     </div>
     <div class="stat-item">
-        <div class="stat-value" id="score-pct">0%</div>
-        <div>Réussite</div>
+        <div class="stat-value" id="score-pct-current-mode">0%</div>
+        <div id="score-pct-current-mode-label">Réussite Mode 1</div>
     </div>
 </div>
 
@@ -1932,6 +2003,21 @@ let usedIndices = [];
 let jamoUsedIndices = [];
 let answered = false;
 let stats = { correct: 0, wrong: 0, total: 0 };
+let modeStats = {
+    0: { correct: 0, wrong: 0, total: 0 },
+    1: { correct: 0, wrong: 0, total: 0 },
+    2: { correct: 0, wrong: 0, total: 0 },
+    3: { correct: 0, wrong: 0, total: 0 },
+    4: { correct: 0, wrong: 0, total: 0 }
+};
+
+function recordAttempt(isCorrect) {
+    stats.total++;
+    if (isCorrect) stats.correct++; else stats.wrong++;
+    const m = modeStats[currentMode];
+    m.total++;
+    if (isCorrect) m.correct++; else m.wrong++;
+}
 let currentKbTab = 'initial';
 // Chaque mode garde son propre mot en cours (pour éviter d'avoir le même mot
 // dans les 3 modes en même temps) + son propre état de réponse/feedback.
@@ -2152,6 +2238,7 @@ function setMode(mode) {
     } else {
         setupUIForCurrentWord();
     }
+    updateModeStatsDisplay();
 }
 
 // ============================================================
@@ -2716,8 +2803,7 @@ function evaluatePronunciation(alternatives) {
 
     if (isCorrect) {
         answered = true;
-        stats.total++;
-        stats.correct++;
+        recordAttempt(true);
         document.getElementById('skip-btn').style.display = 'none';
         feedback.className = 'feedback correct';
         feedback.innerHTML = `
@@ -2734,7 +2820,7 @@ function evaluatePronunciation(alternatives) {
         feedback.className = 'feedback wrong';
         feedback.innerHTML = `
             <div class="feedback-icon">❌</div>
-            <strong>Pas tout à fait !</strong><br>
+            <strong>Prononciation erronée</strong><br>
             Mot attendu : <strong>${currentWord.k}</strong> (${currentWord.r})<br>
             <small>Ce qui a été compris : "${heard || '(rien de compréhensible)'}"</small><br>
             <small>🔁 Réessayez : appuyez à nouveau sur "🎤 Parler".</small>
@@ -2755,7 +2841,6 @@ function checkAnswer() {
     if (!userAnswer) return;
 
     answered = true;
-    stats.total++;
     input.disabled = true;
 
     const feedback = document.getElementById('feedback');
@@ -2776,7 +2861,7 @@ function checkAnswer() {
     }
 
     if (isCorrect) {
-        stats.correct++;
+        recordAttempt(true);
         input.classList.add('correct');
         feedback.className = 'feedback correct';
         feedback.innerHTML = `
@@ -2784,7 +2869,7 @@ function checkAnswer() {
             <strong>Excellent !</strong> Bonne réponse !
         `;
     } else {
-        stats.wrong++;
+        recordAttempt(false);
         input.classList.add('wrong');
         feedback.className = 'feedback wrong';
 
@@ -2818,8 +2903,7 @@ function checkAnswer() {
 function giveUp() {
     if (answered) return;
     answered = true;
-    stats.total++;
-    stats.wrong++;
+    recordAttempt(false);
 
     stopRecognition();
     const input = document.getElementById('answer-input');
@@ -2895,12 +2979,54 @@ function getRomanizationExplanation(word) {
 // ============================================================
 // STATISTIQUES
 // ============================================================
+function pctColorClass(pct) {
+    if (pct >= 80) return 'pct-green';
+    if (pct >= 50) return 'pct-yellow';
+    if (pct >= 30) return 'pct-orange';
+    return 'pct-red';
+}
+
+function setPctWithColor(elId, pct) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = pct + '%';
+    el.classList.remove('pct-green', 'pct-yellow', 'pct-orange', 'pct-red');
+    el.classList.add(pctColorClass(pct));
+}
+
 function updateStats() {
-    document.getElementById('score-correct').textContent = stats.correct;
-    document.getElementById('score-wrong').textContent = stats.wrong;
-    document.getElementById('score-total').textContent = stats.total;
-    const pct = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-    document.getElementById('score-pct').textContent = pct + '%';
+    // Barre 1 : réussite globale (tous modes confondus) + réussite par mode
+    const globalPct = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+    setPctWithColor('score-pct', globalPct);
+    for (let mode = 0; mode <= 4; mode++) {
+        const m = modeStats[mode];
+        const modePct = m.total > 0 ? Math.round((m.correct / m.total) * 100) : 0;
+        setPctWithColor('score-pct-mode-' + mode, modePct);
+    }
+    updateModeStatsDisplay();
+}
+
+const MODE_NAMES = {
+    0: 'Voyelle/Consonne',
+    1: '한글 → Son',
+    2: 'Son → 한글',
+    3: '🔊 Audio → 한글',
+    4: '🎤 Prononciation'
+};
+
+function updateModeStatsDisplay() {
+    // Barre 2 : correct / erreurs / total / réussite du mode actuellement sélectionné.
+    // Les stats des autres modes restent en mémoire dans modeStats
+    // (elles ne sont jamais réinitialisées quand on change de mode)
+    // et réapparaissent dès qu'on y revient.
+    const m = modeStats[currentMode];
+    const modePct = m.total > 0 ? Math.round((m.correct / m.total) * 100) : 0;
+    document.getElementById('score-correct').textContent = m.correct;
+    document.getElementById('score-wrong').textContent = m.wrong;
+    document.getElementById('score-total').textContent = m.total;
+    setPctWithColor('score-pct-current-mode', modePct);
+    const labelEl = document.getElementById('score-pct-current-mode-label');
+    if (labelEl) labelEl.textContent = 'Réussite Mode ' + currentMode + ' (' + MODE_NAMES[currentMode] + ')';
 }
 
 function updateProgress() {
