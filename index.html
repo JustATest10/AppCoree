@@ -2370,6 +2370,10 @@ function renderWordDisplay() {
             <div class="mic-status" id="mic-status"></div>
         `;
         startMicLevelMeter();
+        const compat = checkMode4Compatibility();
+        if (!compat.ok) {
+            setMicStatus(compat.message);
+        }
     }
 }
 
@@ -2492,6 +2496,22 @@ function getSpeechRecognitionClass() {
     return window.SpeechRecognition || window.webkitSpeechRecognition || null;
 }
 
+// Le mode 4 (reconnaissance vocale) ne fonctionne de façon fiable que sur
+// Chrome et Edge. Firefox/Safari n'implémentent pas l'API. Brave l'implémente
+// mais bloque par défaut la requête réseau vers les serveurs Google.
+function checkMode4Compatibility() {
+    const isBrave = !!(navigator.brave && typeof navigator.brave.isBrave === 'function');
+    const hasSR = !!getSpeechRecognitionClass();
+
+    if (isBrave) {
+        return { ok: false, message: "⚠️ Le mode Prononciation nécessite Chrome ou Edge. Brave bloque le service de reconnaissance vocale de Google par défaut (protection de vie privée) et cela ne peut pas être corrigé depuis l'application. Ouvrez cette page avec Chrome ou Edge pour utiliser ce mode." };
+    }
+    if (!hasSR) {
+        return { ok: false, message: "⚠️ Le mode Prononciation nécessite Chrome ou Edge (ordinateur ou Android). Ce navigateur ne supporte pas la reconnaissance vocale." };
+    }
+    return { ok: true, message: '' };
+}
+
 function stopRecognition() {
     if (micSilenceTimeout) {
         clearTimeout(micSilenceTimeout);
@@ -2588,13 +2608,14 @@ function setMicStatus(msg) {
 function startPronunciationCheck() {
     if (currentMode !== 4) return;
 
-    const SR = getSpeechRecognitionClass();
     const micBtn = document.getElementById('mic-btn');
 
-    if (!SR) {
-        setMicStatus("⚠️ La reconnaissance vocale n'est pas disponible sur ce navigateur. Essayez avec Chrome (ordinateur ou Android).");
+    const compat = checkMode4Compatibility();
+    if (!compat.ok) {
+        setMicStatus(compat.message);
         return;
     }
+    const SR = getSpeechRecognitionClass();
 
     stopRecognition();
     recognition = new SR();
