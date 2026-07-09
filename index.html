@@ -2638,6 +2638,12 @@ function startPronunciationCheck() {
             }
         } else if (e.error === 'no-speech') {
             setMicStatus("🤔 Aucun son détecté, réessayez.");
+        } else if (e.error === 'network') {
+            if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
+                setMicStatus("⚠️ Brave bloque le service de reconnaissance vocale de Google (protection de vie privée intégrée). Essayez de désactiver les Shields pour ce site, ou activez \"Utiliser un service Google pour la reconnaissance vocale\" dans brave://settings/privacy. Sinon, utilisez Chrome ou Edge pour ce mode.");
+            } else {
+                setMicStatus("⚠️ Erreur réseau pendant la reconnaissance vocale. Vérifiez votre connexion, vos extensions de blocage (uBlock, etc.), ou essayez avec Chrome/Edge. Réessayez.");
+            }
         } else {
             setMicStatus("⚠️ Erreur de reconnaissance vocale (" + e.error + "). Réessayez.");
         }
@@ -2671,6 +2677,15 @@ function evaluatePronunciation(alternatives) {
     if (answered || currentMode !== 4) return;
 
     stopRecognition();
+
+    // stopRecognition() supprime l'écouteur onend avant qu'il ne se déclenche
+    // naturellement -> il faut donc réactiver le bouton nous-même ici,
+    // sinon il reste bloqué sur "Je vous écoute..." et on ne peut plus réessayer.
+    const micBtn = document.getElementById('mic-btn');
+    if (micBtn) {
+        micBtn.disabled = false;
+        micBtn.textContent = '🎤 Parler';
+    }
 
     const target = normalizeKoreanSpeech(currentWord.k);
     const heard = alternatives[0] || '';
