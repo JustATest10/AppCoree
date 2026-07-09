@@ -1253,7 +1253,7 @@ const words = [
   {k:"남자",r:"namja",f:"Homme",cat:"Divers"},
   {k:"여자",r:"yeoja",f:"Femme",cat:"Divers"},
   {k:"아이",r:"ai",f:"Enfant",cat:"Divers"},
-  {k:"친구",r:"chingu",f:"Ami",cat:"Divers"},
+  {k:"친구",r:"chingu",f:"Ami",cat:"Amour et relations"},
   {k:"이름",r:"ireum",f:"Prénom / nom",cat:"Divers"},
   {k:"나이",r:"nai",f:"Âge",cat:"Divers"},
   {k:"생일",r:"saengil",f:"Anniversaire",cat:"Divers"},
@@ -1299,8 +1299,8 @@ const words = [
   // Suppléments pour atteindre 500
   {k:"전기",r:"jeongi",f:"Électricité",cat:"Divers"},
   {k:"가스",r:"gaseu",f:"Gaz",cat:"Divers"},
-  {k:"인터넷",r:"inteonet",f:"Internet",cat:"Divers"},
-  {k:"비밀번호",r:"bimilbeonho",f:"Mot de passe",cat:"Divers"},
+  {k:"인터넷",r:"inteonet",f:"Internet",cat:"Internet et communication"},
+  {k:"비밀번호",r:"bimilbeonho",f:"Mot de passe",cat:"Internet et communication"},
   {k:"사진기",r:"sajingi",f:"Appareil photo",cat:"Divers"},
   {k:"마이크",r:"maikeu",f:"Microphone",cat:"Divers"},
   {k:"스피커",r:"seupikeo",f:"Haut-parleur",cat:"Divers"},
@@ -1312,14 +1312,14 @@ const words = [
   {k:"마우스",r:"mauseu",f:"Souris (ordinateur)",cat:"Divers"},
   {k:"프린터",r:"peurinteo",f:"Imprimante",cat:"Divers"},
   {k:"복사기",r:"boksagi",f:"Photocopieuse",cat:"Divers"},
-  {k:"냄비",r:"naembi",f:"Casserole",cat:"Divers"},
-  {k:"프라이팬",r:"peuraipaen",f:"Poêle",cat:"Divers"},
-  {k:"접시",r:"jeobsi",f:"Assiette",cat:"Divers"},
-  {k:"컵",r:"keop",f:"Tasse / verre",cat:"Divers"},
-  {k:"숟가락",r:"sutgarak",f:"Cuillère",cat:"Divers"},
-  {k:"젓가락",r:"jeosgarak",f:"Baguettes",cat:"Divers"},
+  {k:"냄비",r:"naembi",f:"Casserole",cat:"Cuisine"},
+  {k:"프라이팬",r:"peuraipaen",f:"Poêle",cat:"Cuisine"},
+  {k:"접시",r:"jeobsi",f:"Assiette",cat:"Cuisine"},
+  {k:"컵",r:"keop",f:"Tasse / verre",cat:"Cuisine"},
+  {k:"숟가락",r:"sutgarak",f:"Cuillère",cat:"Cuisine"},
+  {k:"젓가락",r:"jeosgarak",f:"Baguettes",cat:"Cuisine"},
   {k:"포크",r:"pokeu",f:"Fourchette",cat:"Divers"},
-  {k:"칼",r:"kal",f:"Couteau",cat:"Divers"},
+  {k:"칼",r:"kal",f:"Couteau",cat:"Cuisine"},
   {k:"냉동고",r:"naengdonggo",f:"Congélateur",cat:"Divers"},
   {k:"전자레인지",r:"jeonjarenji",f:"Micro-ondes",cat:"Divers"},
   {k:"세탁",r:"setak",f:"Lessive / lavage",cat:"Divers"},
@@ -1334,17 +1334,17 @@ const words = [
   {k:"신용카드",r:"sinyongkadeu",f:"Carte de crédit",cat:"Divers"},
   {k:"현금",r:"hyeongeum",f:"Argent liquide",cat:"Divers"},
   {k:"환전",r:"hwanjeon",f:"Change (monnaie)",cat:"Divers"},
-  {k:"여권",r:"yeogwon",f:"Passeport",cat:"Divers"},
-  {k:"비자",r:"bija",f:"Visa",cat:"Divers"},
+  {k:"여권",r:"yeogwon",f:"Passeport",cat:"Voyage"},
+  {k:"비자",r:"bija",f:"Visa",cat:"Voyage"},
   {k:"짐",r:"jim",f:"Bagage",cat:"Divers"},
-  {k:"예약",r:"yeyak",f:"Réservation",cat:"Divers"},
+  {k:"예약",r:"yeyak",f:"Réservation",cat:"Voyage"},
   {k:"취소",r:"chwiso",f:"Annulation",cat:"Divers"},
   {k:"출발",r:"chulbal",f:"Départ",cat:"Divers"},
   {k:"도착",r:"dochak",f:"Arrivée",cat:"Divers"},
   {k:"지도",r:"jido",f:"Carte / plan",cat:"Divers"},
   {k:"주소",r:"juso",f:"Adresse",cat:"Divers"},
   {k:"전화번호",r:"jeonhwabeonho",f:"Numéro de téléphone",cat:"Divers"},
-  {k:"이메일",r:"imeil",f:"E-mail",cat:"Divers"},
+  {k:"이메일",r:"imeil",f:"E-mail",cat:"Internet et communication"},
   {k:"회의",r:"hoeui",f:"Réunion",cat:"Divers"},
   {k:"발표",r:"balpyo",f:"Présentation / annonce",cat:"Divers"},
   {k:"계획",r:"gyehoek",f:"Plan / projet",cat:"Divers"},
@@ -2049,6 +2049,85 @@ const words = [
   {k:"속도",r:"sokdo",f:"Vitesse",cat:"Transports"},
   {k:"교통",r:"gyotong",f:"Circulation / transport",cat:"Transports"},
   {k:"교통체증",r:"gyotongchejeung",f:"Embouteillage",cat:"Transports"},
+
+  // ============================================================
+  // NOUVEAUX MOTS AJOUTES (enrichissement + nouveaux themes)
+  // ============================================================
+  // Amour et relations
+  {k:"남자친구",r:"namjachingu",f:"Petit ami",cat:"Amour et relations"},
+  {k:"여자친구",r:"yeojachingu",f:"Petite amie",cat:"Amour et relations"},
+  {k:"애인",r:"aein",f:"Amoureux / amoureuse",cat:"Amour et relations"},
+  {k:"결혼",r:"gyeolhon",f:"Mariage",cat:"Amour et relations"},
+  {k:"결혼하다",r:"gyeolhonhada",f:"Se marier",cat:"Amour et relations"},
+  {k:"이혼",r:"ihon",f:"Divorce",cat:"Amour et relations"},
+  {k:"데이트",r:"deiteu",f:"Rendez-vous amoureux",cat:"Amour et relations"},
+  {k:"커플",r:"keopeul",f:"Couple",cat:"Amour et relations"},
+  {k:"짝사랑",r:"jjaksarang",f:"Amour à sens unique",cat:"Amour et relations"},
+  {k:"이별",r:"ibyeol",f:"Séparation / rupture",cat:"Amour et relations"},
+  {k:"소개팅",r:"sogaeting",f:"Rendez-vous arrangé",cat:"Amour et relations"},
+  {k:"우정",r:"ujeong",f:"Amitié",cat:"Amour et relations"},
+
+  // Internet et communication
+  {k:"문자",r:"munja",f:"SMS / message texte",cat:"Internet et communication"},
+  {k:"채팅",r:"chaeting",f:"Chat / messagerie",cat:"Internet et communication"},
+  {k:"댓글",r:"daetgeul",f:"Commentaire",cat:"Internet et communication"},
+  {k:"좋아요",r:"joayo",f:"J'aime (like)",cat:"Internet et communication"},
+  {k:"팔로우",r:"pallou",f:"Suivre (follow)",cat:"Internet et communication"},
+  {k:"게시물",r:"gesimul",f:"Publication (post)",cat:"Internet et communication"},
+  {k:"프로필",r:"peurofil",f:"Profil",cat:"Internet et communication"},
+  {k:"아이디",r:"aidi",f:"Identifiant (ID)",cat:"Internet et communication"},
+  {k:"검색",r:"geomsaek",f:"Recherche",cat:"Internet et communication"},
+  {k:"검색하다",r:"geomsaekhada",f:"Rechercher",cat:"Internet et communication"},
+  {k:"공유하다",r:"gongyuhada",f:"Partager",cat:"Internet et communication"},
+
+  // Cuisine
+  {k:"도마",r:"doma",f:"Planche à découper",cat:"Cuisine"},
+  {k:"그릇",r:"geureut",f:"Bol",cat:"Cuisine"},
+  {k:"끓이다",r:"kkeurida",f:"Faire bouillir",cat:"Cuisine"},
+  {k:"굽다",r:"gupda",f:"Griller / cuire au four",cat:"Cuisine"},
+  {k:"볶다",r:"bokda",f:"Faire sauter (wok)",cat:"Cuisine"},
+
+  // Couleurs
+  {k:"청록색",r:"cheongnoksaek",f:"Turquoise",cat:"Couleurs"},
+  {k:"자주색",r:"jajusaek",f:"Pourpre / magenta",cat:"Couleurs"},
+  {k:"베이지색",r:"beijisaek",f:"Beige",cat:"Couleurs"},
+  {k:"남색",r:"namsaek",f:"Bleu marine / indigo",cat:"Couleurs"},
+  {k:"형광색",r:"hyeonggwangsaek",f:"Couleur fluo",cat:"Couleurs"},
+
+  // Transports
+  {k:"지하철역",r:"jihacheollyeok",f:"Station de métro",cat:"Transports"},
+  {k:"트럭",r:"teureok",f:"Camion",cat:"Transports"},
+  {k:"렌터카",r:"renteoka",f:"Voiture de location",cat:"Transports"},
+  {k:"안전벨트",r:"anjeonbelteu",f:"Ceinture de sécurité",cat:"Transports"},
+  {k:"고속도로",r:"gosokdoro",f:"Autoroute",cat:"Transports"},
+  {k:"매표소",r:"maepyoso",f:"Guichet / billetterie",cat:"Transports"},
+
+  // Voyage
+  {k:"캐리어",r:"kaerieo",f:"Valise à roulettes",cat:"Voyage"},
+  {k:"배낭",r:"baenang",f:"Sac à dos",cat:"Voyage"},
+  {k:"예약하다",r:"yeyakhada",f:"Réserver",cat:"Voyage"},
+
+  // Travail
+  {k:"상사",r:"sangsa",f:"Supérieur hiérarchique",cat:"Travail"},
+  {k:"야근",r:"yageun",f:"Heures supplémentaires (soir)",cat:"Travail"},
+  {k:"재택근무",r:"jaetaekgeunmu",f:"Télétravail",cat:"Travail"},
+  {k:"명함",r:"myeongham",f:"Carte de visite",cat:"Travail"},
+
+  // Argent et shopping
+  {k:"지불하다",r:"jibulhada",f:"Payer",cat:"Argent et shopping"},
+
+  // Salutations
+  {k:"힘내",r:"himnae",f:"Courage / tiens bon",cat:"Salutations"},
+  {k:"축하해요",r:"chukhahaeyo",f:"Félicitations (poli)",cat:"Salutations"},
+  {k:"오랜만이에요",r:"oraenmanieyo",f:"Ça faisait longtemps",cat:"Salutations"},
+  {k:"다행이다",r:"dahaengida",f:"Quel soulagement / heureusement",cat:"Salutations"},
+  {k:"축복",r:"chukbok",f:"Bénédiction / vœu de bonheur",cat:"Salutations"},
+  {k:"조심하세요",r:"josimhaseyo",f:"Soyez prudent",cat:"Salutations"},
+  {k:"건강하세요",r:"geonganghaseyo",f:"Prenez soin de votre santé",cat:"Salutations"},
+
+  // Professions
+  {k:"대통령",r:"daetongnyeong",f:"Président (d'un pays)",cat:"Professions"},
+  {k:"통역사",r:"tongyeoksa",f:"Interprète",cat:"Professions"},
 ];
 
 // ============================================================
