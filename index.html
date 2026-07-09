@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apprendre le Coréen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        header h1 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            background: linear-gradient(90deg, #e94560, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 12px 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .mode-btn:hover {
+            background: rgba(233,69,96,0.3);
+            border-color: #e94560;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border-color: #e94560;
+            box-shadow: 0 0 20px rgba(233,69,96,0.4);
+        }
+
+        .main-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            margin: 10px auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .word-display {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .korean-word {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            color: #f5a623;
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+        }
+
+        .translation {
+            font-size: 1.1rem;
+            color: #a8d8ea;
+            margin-bottom: 6px;
+        }
+
+        .romanization-hint {
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+
+        .audio-btn {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto 20px;
+            transition: all 0.3s;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(74,144,226,0.5);
+        }
+
+        .audio-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 20px;
+        }
+
+        .audio-btn-row .audio-btn {
+            margin: 0;
+        }
+
+        .audio-btn-slow {
+            background: linear-gradient(135deg, #7a5fd0, #5b3fae);
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+
+        .audio-btn-slow:hover {
+            box-shadow: 0 5px 20px rgba(122,95,208,0.5);
+        }
+
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-input {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            width: 100%;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .answer-input[readonly] {
+            background: rgba(255,255,255,0.1);
+            cursor: default;
+        }
+
+        .answer-input.correct {
+            border-color: #2ecc71;
+            background: rgba(46,204,113,0.1);
+        }
+
+        .answer-input.wrong {
+            border-color: #e74c3c;
+            background: rgba(231,76,60,0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233,69,96,0.5);
+        }
+
+        .skip-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #ccc;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .skip-btn:hover {
+            background: rgba(231,76,60,0.15);
+            border-color: #e74c3c;
+            color: #ff8a80;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(46,204,113,0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+            display: block;
+        }
+
+        .feedback.wrong {
+            background: rgba(231,76,60,0.15);
+            border: 1px solid #e74c3c;
+            color: #ff8a80;
+            display: block;
+        }
+
+        .feedback-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            border: none;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 12px;
+            width: 100%;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(39,174,96,0.5);
+        }
+
+        /* CLAVIER CORÉEN */
+        .keyboard-container {
+            margin-top: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .keyboard-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .kb-tab {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .kb-tab.active {
+            background: #e94560;
+            border-color: #e94560;
+            color: white;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .key {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            min-width: 38px;
+            text-align: center;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .key:hover {
+            background: rgba(233,69,96,0.4);
+            border-color: #e94560;
+        }
+
+        .key:active {
+            transform: scale(0.92);
+        }
+
+        .key.special {
+            font-size: 0.75rem;
+            padding: 10px 10px;
+            min-width: 50px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .key.space-key {
+            min-width: 120px;
+        }
+
+        .kb-hint {
+            margin-top: 10px;
+            font-size: 0.78rem;
+            color: #999;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .kb-hint strong {
+            color: #a8d8ea;
+        }
+
+        .audio-notice {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: #ffcc80;
+            background: rgba(245,166,35,0.12);
+            border: 1px solid rgba(245,166,35,0.35);
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .mic-row {
+            display: flex;
+            justify-content: center;
+            margin: 10px auto 6px;
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border: none;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .mic-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(233,69,96,0.5);
+        }
+
+        .mic-btn:disabled {
+            opacity: 0.75;
+            cursor: default;
+        }
+
+        .mic-status {
+            min-height: 1.2em;
+            margin-top: 8px;
+            padding: 0 10px;
+            font-size: 0.85rem;
+            color: #ffcc80;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* STATS */
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            margin: 0 auto 10px;
+            width: 90%;
+            max-width: 600px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f5a623;
+        }
+
+        .progress-bar {
+            width: 90%;
+            max-width: 600px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin: 0 auto 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #f5a623);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-card {
+                padding: 20px 15px;
+            }
+            .key {
+                min-width: 32px;
+                padding: 8px 5px;
+                font-size: 1rem;
+            }
+            .key.special {
+                min-width: 42px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .mode-description {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+        }
+
+        .hangul-display-input {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            min-height: 54px;
+        }
+
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🇰🇷 Apprendre le Coréen</h1>
+</header>
+
+<div class="mode-selector">
+    <button class="mode-btn" onclick="setMode(0)">
+        Mode 0<br><small>Voyelle/Consonne</small>
+    </button>
+    <button class="mode-btn active" onclick="setMode(1)">
+        Mode 1<br><small>한글 → Son</small>
+    </button>
+    <button class="mode-btn" onclick="setMode(2)">
+        Mode 2<br><small>Son → 한글</small>
+    </button>
+    <button class="mode-btn" onclick="setMode(3)">
+        Mode 3<br><small>🔊 Audio → 한글</small>
+    </button>
+    <button class="mode-btn" onclick="setMode(4)">
+        Mode 4<br><small>🎤 Prononciation</small>
+    </button>
+</div>
+
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-value" id="score-correct">0</div>
+        <div>✅ Correct</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-wrong">0</div>
+        <div>❌ Erreurs</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-total">0</div>
+        <div>Total</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct">0%</div>
+        <div>Réussite</div>
+    </div>
+</div>
+
+<div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+</div>
+
+<div class="main-card" id="main-card">
+    <div class="mode-description" id="mode-desc">Lisez le mot coréen et écrivez sa romanisation (sons)</div>
+    
+    <div class="word-display" id="word-display">
+        <!-- contenu dynamique -->
+    </div>
+
+    <div class="input-area" id="input-area">
+        <input type="text" class="answer-input" id="answer-input" placeholder="Votre réponse..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <button class="submit-btn" id="submit-btn" onclick="checkAnswer()">Vérifier ✓</button>
+    </div>
+    <button class="skip-btn" id="skip-btn" onclick="giveUp()">🔄 Changer de mot (je ne sais pas)</button>
+
+    <div class="feedback" id="feedback"></div>
+    <button class="continue-btn" id="continue-btn" onclick="nextWord()">Continuer →</button>
+
+    <div class="keyboard-container" id="keyboard-container" style="display:none;">
+        <div class="keyboard-tabs">
+            <button class="kb-tab active" onclick="switchKbTab('initial')">Initiales</button>
+            <button class="kb-tab" onclick="switchKbTab('vowel')">Voyelles</button>
+            <button class="kb-tab" onclick="switchKbTab('final')">Finales</button>
+        </div>
+        <div id="keyboard-keys"></div>
+        <div class="kb-hint">⌨️ Astuce : vous pouvez aussi taper directement avec votre clavier (disposition coréenne 2-beolsik), ex : <strong>r</strong>=ㄱ, <strong>s</strong>=ㄴ, <strong>k</strong>=ㅏ, <strong>h</strong>=ㅗ</div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// BASE DE DONNÉES - 500 mots coréens pour débutants
+// ============================================================
+const words = [
+  // Famille
+  {k:"고모",r:"gomo",f:"Tante (côté père)"},
+  {k:"이모",r:"imo",f:"Tante (côté mère)"},
+  {k:"아빠",r:"appa",f:"Papa"},
+  {k:"엄마",r:"eomma",f:"Maman"},
+  {k:"형",r:"hyeong",f:"Grand frère (pour homme)"},
+  {k:"오빠",r:"oppa",f:"Grand frère (pour femme)"},
+  {k:"누나",r:"nuna",f:"Grande sœur (pour homme)"},
+  {k:"언니",r:"eonni",f:"Grande sœur (pour femme)"},
+  {k:"남동생",r:"namdongsaeng",f:"Petit frère"},
+  {k:"여동생",r:"yeodongsaeng",f:"Petite sœur"},
+  {k:"할머니",r:"halmeoni",f:"Grand-mère"},
+  {k:"할아버지",r:"harabeoji",f:"Grand-père"},
+  {k:"삼촌",r:"samchon",f:"Oncle"},
+  {k:"아들",r:"adeul",f:"Fils"},
+  {k:"딸",r:"ttal",f:"Fille"},
+  {k:"남편",r:"nampyeon",f:"Mari"},
+  {k:"아내",r:"anae",f:"Femme (épouse)"},
+  {k:"부모",r:"bumo",f:"Parents"},
+  {k:"가족",r:"gajok",f:"Famille"},
+  {k:"아기",r:"agi",f:"Bébé"},
+
+  // Salutations et expressions
+  {k:"안녕",r:"annyeong",f:"Salut / au revoir"},
+  {k:"감사",r:"gamsa",f:"Merci (gratitude)"},
+  {k:"미안",r:"mian",f:"Désolé"},
+  {k:"괜찮아",r:"gwaenchana",f:"Ça va / pas grave"},
+  {k:"네",r:"ne",f:"Oui"},
+  {k:"아니오",r:"anio",f:"Non"},
+  {k:"맞아",r:"maja",f:"C'est juste"},
+  {k:"몰라",r:"molla",f:"Je ne sais pas"},
+  {k:"알아",r:"ara",f:"Je sais"},
+  {k:"잠깐",r:"jamkkan",f:"Un instant"},
+
+  // Chiffres
+  {k:"일",r:"il",f:"Un (sino-coréen)"},
+  {k:"이",r:"i",f:"Deux (sino-coréen)"},
+  {k:"삼",r:"sam",f:"Trois (sino-coréen)"},
+  {k:"사",r:"sa",f:"Quatre (sino-coréen)"},
+  {k:"오",r:"o",f:"Cinq (sino-coréen)"},
+  {k:"육",r:"yuk",f:"Six (sino-coréen)"},
+  {k:"칠",r:"chil",f:"Sept (sino-coréen)"},
+  {k:"팔",r:"pal",f:"Huit (sino-coréen)"},
+  {k:"구",r:"gu",f:"Neuf (sino-coréen)"},
+  {k:"십",r:"sip",f:"Dix (sino-coréen)"},
+  {k:"하나",r:"hana",f:"Un (coréen natif)"},
+  {k:"둘",r:"dul",f:"Deux (coréen natif)"},
+  {k:"셋",r:"set",f:"Trois (coréen natif)"},
+  {k:"넷",r:"net",f:"Quatre (coréen natif)"},
+  {k:"다섯",r:"daseot",f:"Cinq (coréen natif)"},
+  {k:"여섯",r:"yeoseot",f:"Six (coréen natif)"},
+  {k:"일곱",r:"ilgop",f:"Sept (coréen natif)"},
+  {k:"여덟",r:"yeodeol",f:"Huit (coréen natif)"},
+  {k:"아홉",r:"ahop",f:"Neuf (coréen natif)"},
+  {k:"열",r:"yeol",f:"Dix (coréen natif)"},
+  {k:"백",r:"baek",f:"Cent"},
+  {k:"천",r:"cheon",f:"Mille"},
+  {k:"만",r:"man",f:"Dix mille"},
+
+  // Couleurs
+  {k:"빨간색",r:"ppalgansaek",f:"Rouge"},
+  {k:"파란색",r:"paransaek",f:"Bleu"},
+  {k:"노란색",r:"noransaek",f:"Jaune"},
+  {k:"초록색",r:"choroksaek",f:"Vert"},
+  {k:"하얀색",r:"hayansaek",f:"Blanc"},
+  {k:"검은색",r:"geomeunsaek",f:"Noir"},
+  {k:"분홍색",r:"bunhongsaek",f:"Rose"},
+  {k:"보라색",r:"borasaek",f:"Violet"},
+  {k:"주황색",r:"juhwangsaek",f:"Orange"},
+  {k:"갈색",r:"galsaek",f:"Marron"},
+
+  // Corps humain
+  {k:"머리",r:"meori",f:"Tête"},
+  {k:"얼굴",r:"eolgul",f:"Visage"},
+  {k:"눈",r:"nun",f:"Yeux / neige"},
+  {k:"코",r:"ko",f:"Nez"},
+  {k:"입",r:"ip",f:"Bouche"},
+  {k:"귀",r:"gwi",f:"Oreille"},
+  {k:"손",r:"son",f:"Main"},
+  {k:"발",r:"bal",f:"Pied"},
+  {k:"다리",r:"dari",f:"Jambe"},
+  {k:"팔",r:"pal",f:"Bras"},
+  {k:"배",r:"bae",f:"Ventre / bateau / poire"},
+  {k:"등",r:"deung",f:"Dos"},
+  {k:"가슴",r:"gaseum",f:"Poitrine"},
+  {k:"목",r:"mok",f:"Cou"},
+  {k:"어깨",r:"eokkae",f:"Épaule"},
+  {k:"손가락",r:"songarak",f:"Doigt"},
+  {k:"발가락",r:"balgarak",f:"Orteil"},
+  {k:"무릎",r:"mureup",f:"Genou"},
+  {k:"이",r:"i",f:"Dent"},
+  {k:"혀",r:"hyeo",f:"Langue"},
+
+  // Nourriture
+  {k:"밥",r:"bap",f:"Riz cuit"},
+  {k:"물",r:"mul",f:"Eau"},
+  {k:"빵",r:"ppang",f:"Pain"},
+  {k:"고기",r:"gogi",f:"Viande"},
+  {k:"생선",r:"saengseon",f:"Poisson"},
+  {k:"채소",r:"chaeso",f:"Légumes"},
+  {k:"과일",r:"gwail",f:"Fruits"},
+  {k:"사과",r:"sagwa",f:"Pomme"},
+  {k:"바나나",r:"banana",f:"Banane"},
+  {k:"딸기",r:"ttalgi",f:"Fraise"},
+  {k:"포도",r:"podo",f:"Raisin"},
+  {k:"수박",r:"subak",f:"Pastèque"},
+  {k:"김치",r:"kimchi",f:"Kimchi"},
+  {k:"국",r:"guk",f:"Soupe"},
+  {k:"라면",r:"ramyeon",f:"Ramen"},
+  {k:"떡",r:"tteok",f:"Gâteau de riz"},
+  {k:"계란",r:"gyeran",f:"Œuf"},
+  {k:"우유",r:"uyu",f:"Lait"},
+  {k:"커피",r:"keopi",f:"Café"},
+  {k:"차",r:"cha",f:"Thé / voiture"},
+  {k:"술",r:"sul",f:"Alcool"},
+  {k:"맥주",r:"maekju",f:"Bière"},
+  {k:"소금",r:"sogeum",f:"Sel"},
+  {k:"설탕",r:"seoltang",f:"Sucre"},
+  {k:"기름",r:"gireum",f:"Huile"},
+  {k:"간장",r:"ganjang",f:"Sauce soja"},
+  {k:"된장",r:"doenjang",f:"Pâte de soja"},
+  {k:"고추장",r:"gochujang",f:"Pâte de piment"},
+  {k:"치킨",r:"chikin",f:"Poulet frit"},
+  {k:"피자",r:"pija",f:"Pizza"},
+
+  // Animaux
+  {k:"개",r:"gae",f:"Chien"},
+  {k:"고양이",r:"goyangi",f:"Chat"},
+  {k:"새",r:"sae",f:"Oiseau"},
+  {k:"물고기",r:"mulgogi",f:"Poisson"},
+  {k:"말",r:"mal",f:"Cheval"},
+  {k:"소",r:"so",f:"Vache"},
+  {k:"돼지",r:"dwaeji",f:"Cochon"},
+  {k:"닭",r:"dak",f:"Poulet"},
+  {k:"토끼",r:"tokki",f:"Lapin"},
+  {k:"곰",r:"gom",f:"Ours"},
+  {k:"사자",r:"saja",f:"Lion"},
+  {k:"호랑이",r:"horangi",f:"Tigre"},
+  {k:"코끼리",r:"kokkiri",f:"Éléphant"},
+  {k:"원숭이",r:"wonsungi",f:"Singe"},
+  {k:"뱀",r:"baem",f:"Serpent"},
+  {k:"개구리",r:"gaeguri",f:"Grenouille"},
+  {k:"나비",r:"nabi",f:"Papillon"},
+  {k:"벌",r:"beol",f:"Abeille"},
+  {k:"거미",r:"geomi",f:"Araignée"},
+  {k:"쥐",r:"jwi",f:"Souris / rat"},
+
+  // Nature
+  {k:"하늘",r:"haneul",f:"Ciel"},
+  {k:"땅",r:"ttang",f:"Terre / sol"},
+  {k:"바다",r:"bada",f:"Mer"},
+  {k:"강",r:"gang",f:"Rivière"},
+  {k:"산",r:"san",f:"Montagne"},
+  {k:"숲",r:"sup",f:"Forêt"},
+  {k:"꽃",r:"kkot",f:"Fleur"},
+  {k:"나무",r:"namu",f:"Arbre"},
+  {k:"풀",r:"pul",f:"Herbe"},
+  {k:"비",r:"bi",f:"Pluie"},
+  {k:"눈",r:"nun",f:"Neige / yeux"},
+  {k:"바람",r:"baram",f:"Vent"},
+  {k:"햇빛",r:"haetbit",f:"Lumière du soleil"},
+  {k:"달",r:"dal",f:"Lune"},
+  {k:"별",r:"byeol",f:"Étoile"},
+  {k:"구름",r:"gureum",f:"Nuage"},
+  {k:"돌",r:"dol",f:"Pierre"},
+  {k:"모래",r:"morae",f:"Sable"},
+  {k:"불",r:"bul",f:"Feu"},
+  {k:"얼음",r:"eoreum",f:"Glace"},
+
+  // Temps et saisons
+  {k:"봄",r:"bom",f:"Printemps"},
+  {k:"여름",r:"yeoreum",f:"Été"},
+  {k:"가을",r:"gaeul",f:"Automne"},
+  {k:"겨울",r:"gyeoul",f:"Hiver"},
+  {k:"오늘",r:"oneul",f:"Aujourd'hui"},
+  {k:"내일",r:"naeil",f:"Demain"},
+  {k:"어제",r:"eoje",f:"Hier"},
+  {k:"지금",r:"jigeum",f:"Maintenant"},
+  {k:"아침",r:"achim",f:"Matin"},
+  {k:"점심",r:"jeomsim",f:"Midi / déjeuner"},
+  {k:"저녁",r:"jeonyeok",f:"Soir"},
+  {k:"밤",r:"bam",f:"Nuit"},
+  {k:"월요일",r:"woryoil",f:"Lundi"},
+  {k:"화요일",r:"hwayoil",f:"Mardi"},
+  {k:"수요일",r:"suyoil",f:"Mercredi"},
+  {k:"목요일",r:"mogyoil",f:"Jeudi"},
+  {k:"금요일",r:"geumyoil",f:"Vendredi"},
+  {k:"토요일",r:"toyoil",f:"Samedi"},
+  {k:"일요일",r:"iryoil",f:"Dimanche"},
+  {k:"주말",r:"jumal",f:"Week-end"},
+  {k:"년",r:"nyeon",f:"Année"},
+  {k:"월",r:"wol",f:"Mois"},
+  {k:"주",r:"ju",f:"Semaine"},
+  {k:"시간",r:"sigan",f:"Heure / temps"},
+  {k:"분",r:"bun",f:"Minute"},
+
+  // Maison et objets
+  {k:"집",r:"jip",f:"Maison"},
+  {k:"방",r:"bang",f:"Chambre"},
+  {k:"화장실",r:"hwajangsil",f:"Toilettes / salle de bain"},
+  {k:"부엌",r:"bueok",f:"Cuisine"},
+  {k:"거실",r:"geosil",f:"Salon"},
+  {k:"문",r:"mun",f:"Porte"},
+  {k:"창문",r:"changmun",f:"Fenêtre"},
+  {k:"침대",r:"chimdae",f:"Lit"},
+  {k:"소파",r:"sopa",f:"Canapé"},
+  {k:"의자",r:"uija",f:"Chaise"},
+  {k:"책상",r:"chaeksang",f:"Bureau"},
+  {k:"책",r:"chaek",f:"Livre"},
+  {k:"가방",r:"gabang",f:"Sac"},
+  {k:"옷",r:"ot",f:"Vêtements"},
+  {k:"신발",r:"sinbal",f:"Chaussures"},
+  {k:"열쇠",r:"yeolsoe",f:"Clé"},
+  {k:"전화",r:"jeonhwa",f:"Téléphone"},
+  {k:"컴퓨터",r:"keompyuteo",f:"Ordinateur"},
+  {k:"텔레비전",r:"tellebijeon",f:"Télévision"},
+  {k:"냉장고",r:"naengjanggo",f:"Réfrigérateur"},
+  {k:"세탁기",r:"setakgi",f:"Machine à laver"},
+  {k:"시계",r:"sigye",f:"Montre / horloge"},
+  {k:"거울",r:"geoul",f:"Miroir"},
+  {k:"수건",r:"sugeon",f:"Serviette"},
+  {k:"비누",r:"binu",f:"Savon"},
+  {k:"칫솔",r:"chitsol",f:"Brosse à dents"},
+  {k:"치약",r:"chiyak",f:"Dentifrice"},
+  {k:"우산",r:"usan",f:"Parapluie"},
+  {k:"안경",r:"angyeong",f:"Lunettes"},
+  {k:"지갑",r:"jigap",f:"Portefeuille"},
+
+  // Lieux
+  {k:"학교",r:"hakgyo",f:"École"},
+  {k:"병원",r:"byeongwon",f:"Hôpital"},
+  {k:"은행",r:"eunhaeng",f:"Banque"},
+  {k:"식당",r:"sikdang",f:"Restaurant"},
+  {k:"시장",r:"sijang",f:"Marché"},
+  {k:"가게",r:"gage",f:"Magasin"},
+  {k:"공원",r:"gongwon",f:"Parc"},
+  {k:"도서관",r:"doseogwan",f:"Bibliothèque"},
+  {k:"역",r:"yeok",f:"Gare"},
+  {k:"공항",r:"gonghang",f:"Aéroport"},
+  {k:"호텔",r:"hotel",f:"Hôtel"},
+  {k:"카페",r:"kape",f:"Café"},
+  {k:"편의점",r:"pyeonuijeom",f:"Épicerie 24h"},
+  {k:"약국",r:"yakguk",f:"Pharmacie"},
+  {k:"우체국",r:"ucheguk",f:"Bureau de poste"},
+  {k:"경찰서",r:"gyeongchalseo",f:"Commissariat"},
+  {k:"소방서",r:"sobangseo",f:"Caserne de pompiers"},
+  {k:"교회",r:"gyohoe",f:"Église"},
+  {k:"절",r:"jeol",f:"Temple bouddhiste"},
+  {k:"미술관",r:"misulgwan",f:"Musée d'art"},
+
+  // Transports
+  {k:"버스",r:"beoseu",f:"Bus"},
+  {k:"지하철",r:"jihacheol",f:"Métro"},
+  {k:"택시",r:"taeksi",f:"Taxi"},
+  {k:"비행기",r:"bihaenggi",f:"Avion"},
+  {k:"배",r:"bae",f:"Bateau"},
+  {k:"자전거",r:"jajeongeo",f:"Vélo"},
+  {k:"오토바이",r:"otobai",f:"Moto"},
+  {k:"기차",r:"gicha",f:"Train"},
+  {k:"자동차",r:"jadongcha",f:"Voiture"},
+  {k:"길",r:"gil",f:"Chemin / rue"},
+
+  // Verbes courants
+  {k:"먹다",r:"meokda",f:"Manger"},
+  {k:"마시다",r:"masida",f:"Boire"},
+  {k:"자다",r:"jada",f:"Dormir"},
+  {k:"일어나다",r:"ireonada",f:"Se lever"},
+  {k:"가다",r:"gada",f:"Aller"},
+  {k:"오다",r:"oda",f:"Venir"},
+  {k:"보다",r:"boda",f:"Voir / regarder"},
+  {k:"듣다",r:"deutda",f:"Écouter"},
+  {k:"말하다",r:"malhada",f:"Parler"},
+  {k:"읽다",r:"ikda",f:"Lire"},
+  {k:"쓰다",r:"sseuda",f:"Écrire"},
+  {k:"공부하다",r:"gongbuhada",f:"Étudier"},
+  {k:"일하다",r:"ilhada",f:"Travailler"},
+  {k:"놀다",r:"nolda",f:"Jouer / s'amuser"},
+  {k:"달리다",r:"dallida",f:"Courir"},
+  {k:"걷다",r:"geotda",f:"Marcher"},
+  {k:"앉다",r:"anda",f:"S'asseoir"},
+  {k:"서다",r:"seoda",f:"Se lever / se tenir debout"},
+  {k:"열다",r:"yeolda",f:"Ouvrir"},
+  {k:"닫다",r:"datda",f:"Fermer"},
+  {k:"사다",r:"sada",f:"Acheter"},
+  {k:"팔다",r:"palda",f:"Vendre"},
+  {k:"주다",r:"juda",f:"Donner"},
+  {k:"받다",r:"batda",f:"Recevoir"},
+  {k:"만나다",r:"mannada",f:"Rencontrer"},
+  {k:"사랑하다",r:"saranghada",f:"Aimer"},
+  {k:"좋아하다",r:"joahada",f:"Aimer (apprécier)"},
+  {k:"싫어하다",r:"sireohada",f:"Détester"},
+  {k:"알다",r:"alda",f:"Savoir / connaître"},
+  {k:"모르다",r:"moreuda",f:"Ne pas savoir"},
+  {k:"생각하다",r:"saenggakada",f:"Penser"},
+  {k:"기억하다",r:"gieokhada",f:"Se souvenir"},
+  {k:"웃다",r:"utda",f:"Rire / sourire"},
+  {k:"울다",r:"ulda",f:"Pleurer"},
+  {k:"씻다",r:"ssitda",f:"Se laver"},
+  {k:"입다",r:"ipda",f:"Porter (vêtements)"},
+  {k:"신다",r:"sinda",f:"Porter (chaussures)"},
+  {k:"만들다",r:"mandeulda",f:"Faire / fabriquer"},
+  {k:"찾다",r:"chatda",f:"Chercher / trouver"},
+  {k:"기다리다",r:"gidarida",f:"Attendre"},
+
+  // Adjectifs
+  {k:"크다",r:"keuda",f:"Grand"},
+  {k:"작다",r:"jakda",f:"Petit"},
+  {k:"많다",r:"manta",f:"Beaucoup"},
+  {k:"적다",r:"jeokda",f:"Peu"},
+  {k:"좋다",r:"jota",f:"Bon / bien"},
+  {k:"나쁘다",r:"nappeuda",f:"Mauvais"},
+  {k:"예쁘다",r:"yeppeuda",f:"Joli / beau"},
+  {k:"잘생기다",r:"jalsaengida",f:"Beau (homme)"},
+  {k:"빠르다",r:"ppareuda",f:"Rapide"},
+  {k:"느리다",r:"neurida",f:"Lent"},
+  {k:"뜨겁다",r:"tteugeopda",f:"Chaud"},
+  {k:"차갑다",r:"chagapda",f:"Froid"},
+  {k:"맵다",r:"maepda",f:"Épicé"},
+  {k:"달다",r:"dalda",f:"Sucré"},
+  {k:"짜다",r:"jjada",f:"Salé"},
+  {k:"쓰다",r:"sseuda",f:"Amer"},
+  {k:"새롭다",r:"saereopda",f:"Nouveau"},
+  {k:"오래되다",r:"oraedoeda",f:"Vieux / ancien"},
+  {k:"비싸다",r:"bissada",f:"Cher"},
+  {k:"싸다",r:"ssada",f:"Bon marché"},
+  {k:"쉽다",r:"swipda",f:"Facile"},
+  {k:"어렵다",r:"eoryeopda",f:"Difficile"},
+  {k:"재미있다",r:"jaemiitda",f:"Intéressant / amusant"},
+  {k:"지루하다",r:"jiruhada",f:"Ennuyeux"},
+  {k:"피곤하다",r:"pigonhada",f:"Fatigué"},
+  {k:"행복하다",r:"haengbokhada",f:"Heureux"},
+  {k:"슬프다",r:"seulpeuda",f:"Triste"},
+  {k:"무섭다",r:"museopda",f:"Effrayant / avoir peur"},
+  {k:"배고프다",r:"baegopeuda",f:"Avoir faim"},
+  {k:"배부르다",r:"baebureuda",f:"Être rassasié"},
+
+  // Pronoms et mots courants
+  {k:"나",r:"na",f:"Je / moi"},
+  {k:"저",r:"jeo",f:"Je / moi (poli)"},
+  {k:"너",r:"neo",f:"Tu / toi"},
+  {k:"우리",r:"uri",f:"Nous"},
+  {k:"이것",r:"igeot",f:"Ceci"},
+  {k:"그것",r:"geugeot",f:"Cela"},
+  {k:"저것",r:"jeogeot",f:"Cela (loin)"},
+  {k:"여기",r:"yeogi",f:"Ici"},
+  {k:"거기",r:"geogi",f:"Là"},
+  {k:"저기",r:"jeogi",f:"Là-bas"},
+  {k:"무엇",r:"mueot",f:"Quoi"},
+  {k:"누구",r:"nugu",f:"Qui"},
+  {k:"어디",r:"eodi",f:"Où"},
+  {k:"언제",r:"eonje",f:"Quand"},
+  {k:"왜",r:"wae",f:"Pourquoi"},
+  {k:"어떻게",r:"eotteoke",f:"Comment"},
+  {k:"얼마",r:"eolma",f:"Combien"},
+  {k:"모두",r:"modu",f:"Tous / tout"},
+  {k:"아무것도",r:"amugeotdo",f:"Rien"},
+  {k:"같이",r:"gachi",f:"Ensemble"},
+
+  // Vêtements
+  {k:"바지",r:"baji",f:"Pantalon"},
+  {k:"치마",r:"chima",f:"Jupe"},
+  {k:"셔츠",r:"syeocheu",f:"Chemise"},
+  {k:"티셔츠",r:"tisyeocheu",f:"T-shirt"},
+  {k:"코트",r:"koteu",f:"Manteau"},
+  {k:"재킷",r:"jaekit",f:"Veste"},
+  {k:"모자",r:"moja",f:"Chapeau"},
+  {k:"양말",r:"yangmal",f:"Chaussettes"},
+  {k:"장갑",r:"janggap",f:"Gants"},
+  {k:"목도리",r:"mokdori",f:"Écharpe"},
+
+  // École et études
+  {k:"선생님",r:"seonsaengnim",f:"Professeur"},
+  {k:"학생",r:"haksaeng",f:"Étudiant"},
+  {k:"교실",r:"gyosil",f:"Salle de classe"},
+  {k:"칠판",r:"chilpan",f:"Tableau"},
+  {k:"연필",r:"yeonpil",f:"Crayon"},
+  {k:"볼펜",r:"bolpen",f:"Stylo bille"},
+  {k:"공책",r:"gongchaek",f:"Cahier"},
+  {k:"숙제",r:"sukje",f:"Devoir"},
+  {k:"시험",r:"siheom",f:"Examen"},
+  {k:"점수",r:"jeomssu",f:"Score / note"},
+  {k:"언어",r:"eoneo",f:"Langue"},
+  {k:"한국어",r:"hangugeo",f:"Coréen"},
+  {k:"영어",r:"yeongeo",f:"Anglais"},
+  {k:"프랑스어",r:"peurangseueo",f:"Français"},
+  {k:"수학",r:"suhak",f:"Mathématiques"},
+  {k:"과학",r:"gwahak",f:"Science"},
+  {k:"역사",r:"yeoksa",f:"Histoire"},
+
+  // Professions
+  {k:"의사",r:"uisa",f:"Médecin"},
+  {k:"간호사",r:"ganhosa",f:"Infirmière"},
+  {k:"경찰",r:"gyeongchal",f:"Policier"},
+  {k:"소방관",r:"sobanggwan",f:"Pompier"},
+  {k:"요리사",r:"yorisa",f:"Cuisinier"},
+  {k:"운전사",r:"unjeonsa",f:"Chauffeur"},
+  {k:"농부",r:"nongbu",f:"Agriculteur"},
+  {k:"군인",r:"gunin",f:"Soldat"},
+  {k:"가수",r:"gasu",f:"Chanteur"},
+  {k:"배우",r:"baeu",f:"Acteur"},
+  {k:"작가",r:"jakga",f:"Écrivain"},
+  {k:"화가",r:"hwaga",f:"Peintre"},
+  {k:"기자",r:"gija",f:"Journaliste"},
+  {k:"변호사",r:"byeonhosa",f:"Avocat"},
+  {k:"판사",r:"pansa",f:"Juge"},
+
+  // Sports et loisirs
+  {k:"운동",r:"undong",f:"Sport / exercice"},
+  {k:"축구",r:"chukgu",f:"Football"},
+  {k:"야구",r:"yagu",f:"Baseball"},
+  {k:"농구",r:"nonggu",f:"Basketball"},
+  {k:"수영",r:"suyeong",f:"Natation"},
+  {k:"달리기",r:"dalligi",f:"Course à pied"},
+  {k:"등산",r:"deungsan",f:"Randonnée"},
+  {k:"음악",r:"eumak",f:"Musique"},
+  {k:"노래",r:"norae",f:"Chanson"},
+  {k:"춤",r:"chum",f:"Danse"},
+  {k:"영화",r:"yeonghwa",f:"Film"},
+  {k:"사진",r:"sajin",f:"Photo"},
+  {k:"여행",r:"yeohaeng",f:"Voyage"},
+  {k:"독서",r:"dokseo",f:"Lecture"},
+  {k:"게임",r:"geim",f:"Jeu"},
+
+  // Émotions
+  {k:"기쁨",r:"gippeum",f:"Joie"},
+  {k:"슬픔",r:"seulpeum",f:"Tristesse"},
+  {k:"화",r:"hwa",f:"Colère"},
+  {k:"두려움",r:"duryeoum",f:"Peur"},
+  {k:"사랑",r:"sarang",f:"Amour"},
+  {k:"미움",r:"mium",f:"Haine"},
+  {k:"놀람",r:"nollam",f:"Surprise"},
+  {k:"부끄러움",r:"bukkeureoum",f:"Honte / timidité"},
+  {k:"자신감",r:"jasingam",f:"Confiance en soi"},
+  {k:"걱정",r:"geokjeong",f:"Inquiétude"},
+
+  // Santé
+  {k:"건강",r:"geongang",f:"Santé"},
+  {k:"아프다",r:"apeuda",f:"Avoir mal"},
+  {k:"두통",r:"dutong",f:"Mal de tête"},
+  {k:"감기",r:"gamgi",f:"Rhume"},
+  {k:"열",r:"yeol",f:"Fièvre"},
+  {k:"기침",r:"gichim",f:"Toux"},
+  {k:"약",r:"yak",f:"Médicament"},
+  {k:"수술",r:"susul",f:"Opération chirurgicale"},
+  {k:"휴식",r:"hyusik",f:"Repos"},
+  {k:"운동하다",r:"undonghada",f:"Faire de l'exercice"},
+
+  // Mots divers utiles
+  {k:"돈",r:"don",f:"Argent"},
+  {k:"일",r:"il",f:"Travail / jour / un"},
+  {k:"나라",r:"nara",f:"Pays"},
+  {k:"세계",r:"segye",f:"Monde"},
+  {k:"사람",r:"saram",f:"Personne"},
+  {k:"남자",r:"namja",f:"Homme"},
+  {k:"여자",r:"yeoja",f:"Femme"},
+  {k:"아이",r:"ai",f:"Enfant"},
+  {k:"친구",r:"chingu",f:"Ami"},
+  {k:"이름",r:"ireum",f:"Prénom / nom"},
+  {k:"나이",r:"nai",f:"Âge"},
+  {k:"생일",r:"saengil",f:"Anniversaire"},
+  {k:"선물",r:"seonmul",f:"Cadeau"},
+  {k:"편지",r:"pyeonji",f:"Lettre"},
+  {k:"소식",r:"sosik",f:"Nouvelles"},
+  {k:"이야기",r:"iyagi",f:"Histoire / conversation"},
+  {k:"노력",r:"noryeok",f:"Effort"},
+  {k:"성공",r:"seonggong",f:"Succès"},
+  {k:"실패",r:"silpae",f:"Échec"},
+  {k:"꿈",r:"kkum",f:"Rêve"},
+  {k:"목표",r:"mokpyo",f:"Objectif"},
+  {k:"행운",r:"haengun",f:"Chance / bonne fortune"},
+  {k:"문제",r:"munje",f:"Problème"},
+  {k:"답",r:"dap",f:"Réponse"},
+  {k:"질문",r:"jilmun",f:"Question"},
+  {k:"사실",r:"sasil",f:"Fait / vérité"},
+  {k:"거짓",r:"geojit",f:"Mensonge"},
+  {k:"규칙",r:"gyuchik",f:"Règle"},
+  {k:"법",r:"beop",f:"Loi"},
+  {k:"자유",r:"jayu",f:"Liberté"},
+  {k:"평화",r:"pyeonghwa",f:"Paix"},
+  {k:"전쟁",r:"jeonjaeng",f:"Guerre"},
+  {k:"문화",r:"munhwa",f:"Culture"},
+  {k:"예술",r:"yesul",f:"Art"},
+  {k:"기술",r:"gisul",f:"Technologie / technique"},
+  {k:"자연",r:"jayeon",f:"Nature"},
+  {k:"환경",r:"hwangyeong",f:"Environnement"},
+  {k:"날씨",r:"nalssi",f:"Météo"},
+  {k:"온도",r:"ondo",f:"Température"},
+  {k:"방향",r:"banghyang",f:"Direction"},
+  {k:"위",r:"wi",f:"Dessus / haut"},
+  {k:"아래",r:"arae",f:"Dessous / bas"},
+  {k:"앞",r:"ap",f:"Devant"},
+  {k:"뒤",r:"dwi",f:"Derrière"},
+  {k:"옆",r:"yeop",f:"Côté"},
+  {k:"안",r:"an",f:"Intérieur"},
+  {k:"밖",r:"bak",f:"Extérieur"},
+  {k:"왼쪽",r:"oenjjok",f:"Gauche"},
+  {k:"오른쪽",r:"oreunjjok",f:"Droite"},
+  {k:"가운데",r:"gaunde",f:"Milieu / centre"},
+
+  // Suppléments pour atteindre 500
+  {k:"전기",r:"jeongi",f:"Électricité"},
+  {k:"가스",r:"gaseu",f:"Gaz"},
+  {k:"인터넷",r:"inteonet",f:"Internet"},
+  {k:"비밀번호",r:"bimilbeonho",f:"Mot de passe"},
+  {k:"사진기",r:"sajingi",f:"Appareil photo"},
+  {k:"마이크",r:"maikeu",f:"Microphone"},
+  {k:"스피커",r:"seupikeo",f:"Haut-parleur"},
+  {k:"이어폰",r:"ieopon",f:"Écouteurs"},
+  {k:"충전기",r:"chungjeongi",f:"Chargeur"},
+  {k:"배터리",r:"baeteori",f:"Batterie"},
+  {k:"화면",r:"hwamyeon",f:"Écran"},
+  {k:"키보드",r:"kibodeu",f:"Clavier"},
+  {k:"마우스",r:"mauseu",f:"Souris (ordinateur)"},
+  {k:"프린터",r:"peurinteo",f:"Imprimante"},
+  {k:"복사기",r:"boksagi",f:"Photocopieuse"},
+  {k:"냄비",r:"naembi",f:"Casserole"},
+  {k:"프라이팬",r:"peuraipaen",f:"Poêle"},
+  {k:"접시",r:"jeobsi",f:"Assiette"},
+  {k:"컵",r:"keop",f:"Tasse / verre"},
+  {k:"숟가락",r:"sutgarak",f:"Cuillère"},
+  {k:"젓가락",r:"jeosgarak",f:"Baguettes"},
+  {k:"포크",r:"pokeu",f:"Fourchette"},
+  {k:"칼",r:"kal",f:"Couteau"},
+  {k:"냉동고",r:"naengdonggo",f:"Congélateur"},
+  {k:"전자레인지",r:"jeonjarenji",f:"Micro-ondes"},
+  {k:"세탁",r:"setak",f:"Lessive / lavage"},
+  {k:"청소",r:"cheongso",f:"Nettoyage"},
+  {k:"빨래",r:"ppallae",f:"Linge à laver"},
+  {k:"다림질",r:"darimjil",f:"Repassage"},
+  {k:"요리",r:"yori",f:"Cuisine / cuisson"},
+  {k:"쇼핑",r:"syoping",f:"Shopping"},
+  {k:"할인",r:"harin",f:"Réduction"},
+  {k:"영수증",r:"yeongsujeung",f:"Reçu"},
+  {k:"계산",r:"gyesan",f:"Calcul / paiement"},
+  {k:"신용카드",r:"sinyongkadeu",f:"Carte de crédit"},
+  {k:"현금",r:"hyeongeum",f:"Argent liquide"},
+  {k:"환전",r:"hwanjeon",f:"Change (monnaie)"},
+  {k:"여권",r:"yeogwon",f:"Passeport"},
+  {k:"비자",r:"bija",f:"Visa"},
+  {k:"짐",r:"jim",f:"Bagage"},
+  {k:"예약",r:"yeyak",f:"Réservation"},
+  {k:"취소",r:"chwiso",f:"Annulation"},
+  {k:"출발",r:"chulbal",f:"Départ"},
+  {k:"도착",r:"dochak",f:"Arrivée"},
+  {k:"지도",r:"jido",f:"Carte / plan"},
+  {k:"주소",r:"juso",f:"Adresse"},
+  {k:"전화번호",r:"jeonhwabeonho",f:"Numéro de téléphone"},
+  {k:"이메일",r:"imeil",f:"E-mail"},
+  {k:"회의",r:"hoeui",f:"Réunion"},
+  {k:"발표",r:"balpyo",f:"Présentation / annonce"},
+  {k:"계획",r:"gyehoek",f:"Plan / projet"},
+  {k:"결과",r:"gyeolgwa",f:"Résultat"},
+  {k:"경험",r:"gyeongheom",f:"Expérience"},
+  {k:"기회",r:"gihoe",f:"Opportunité"},
+  {k:"도움",r:"doum",f:"Aide"},
+  {k:"실수",r:"silsu",f:"Erreur / faute"},
+  {k:"연습",r:"yeonseup",f:"Pratique / entraînement"},
+  {k:"준비",r:"junbi",f:"Préparation"},
+  {k:"시작",r:"sijak",f:"Début / commencement"},
+  {k:"끝",r:"kkeut",f:"Fin"},
+  {k:"중간",r:"junggan",f:"Milieu / intermédiaire"},
+  {k:"처음",r:"cheoeum",f:"Première fois / début"},
+  {k:"마지막",r:"majimak",f:"Dernier / finale"},
+  {k:"다음",r:"daeum",f:"Prochain / suivant"},
+  {k:"전",r:"jeon",f:"Avant / précédent"},
+  {k:"후",r:"hu",f:"Après"},
+  {k:"동안",r:"dongan",f:"Pendant"},
+  {k:"갑자기",r:"gapjagi",f:"Soudainement"},
+  {k:"천천히",r:"cheoncheonhi",f:"Lentement"},
+  {k:"빨리",r:"ppalli",f:"Vite / rapidement"},
+  {k:"함께",r:"hamkke",f:"Ensemble"},
+  {k:"혼자",r:"honja",f:"Seul"},
+  {k:"항상",r:"hangsang",f:"Toujours"},
+  {k:"가끔",r:"gakkeum",f:"Parfois"},
+  {k:"절대",r:"jeoldae",f:"Jamais / absolument"},
+  {k:"아마",r:"ama",f:"Peut-être"},
+  {k:"물론",r:"mullon",f:"Bien sûr"},
+  {k:"사실",r:"sasil",f:"En fait"},
+  {k:"그래서",r:"geuraeseo",f:"Donc / alors"},
+  {k:"하지만",r:"hajiman",f:"Mais"},
+  {k:"그리고",r:"geurigo",f:"Et"},
+  {k:"또는",r:"ttoneun",f:"Ou"},
+  {k:"만약",r:"manyak",f:"Si (condition)"},
+  {k:"비록",r:"birok",f:"Bien que"},
+  {k:"왜냐하면",r:"waenyahamyeon",f:"Parce que"},
+  {k:"그러면",r:"geureomyeon",f:"Alors / dans ce cas"},
+  {k:"그런데",r:"geureonde",f:"Mais / cependant"},
+  {k:"즉",r:"jeuk",f:"C'est-à-dire"},
+  {k:"또",r:"tto",f:"Encore / aussi"},
+  {k:"이미",r:"imi",f:"Déjà"},
+  {k:"아직",r:"ajik",f:"Encore / pas encore"},
+  {k:"드디어",r:"deudieo",f:"Enfin"},
+  {k:"역시",r:"yeoksi",f:"Aussi / comme prévu"},
+  {k:"특히",r:"teuki",f:"Surtout / particulièrement"},
+  {k:"정말",r:"jeongmal",f:"Vraiment"},
+  {k:"매우",r:"maeu",f:"Très"},
+  {k:"조금",r:"jogeum",f:"Un peu"},
+  {k:"많이",r:"mani",f:"Beaucoup"},
+  {k:"너무",r:"neomu",f:"Trop"},
+  {k:"거의",r:"geoui",f:"Presque"},
+  {k:"전혀",r:"jeonhyeo",f:"Pas du tout"},
+  {k:"약간",r:"yakgan",f:"Légèrement"},
+  {k:"충분히",r:"chungbunhi",f:"Suffisamment"},
+  {k:"완전히",r:"wanjeonhi",f:"Complètement"},
+  {k:"주로",r:"juro",f:"Principalement"},
+
+  // ============================================================
+  // MOTS SUPPLEMENTAIRES AJOUTES POUR ATTEINDRE 1000-1500 MOTS
+  // ============================================================
+  // Nombres complémentaires (11-20, dizaines)
+  {k:"십일",r:"sibil",f:"Onze"},
+  {k:"십이",r:"sibi",f:"Douze"},
+  {k:"십삼",r:"sipsam",f:"Treize"},
+  {k:"십사",r:"sipsa",f:"Quatorze"},
+  {k:"십오",r:"sibo",f:"Quinze"},
+  {k:"십육",r:"simnyuk",f:"Seize"},
+  {k:"십칠",r:"sipchil",f:"Dix-sept"},
+  {k:"십팔",r:"sippal",f:"Dix-huit"},
+  {k:"십구",r:"sipgu",f:"Dix-neuf"},
+  {k:"이십",r:"isip",f:"Vingt"},
+  {k:"삼십",r:"samsip",f:"Trente"},
+  {k:"사십",r:"sasip",f:"Quarante"},
+  {k:"오십",r:"osip",f:"Cinquante"},
+  {k:"육십",r:"yuksip",f:"Soixante"},
+  {k:"칠십",r:"chilsip",f:"Soixante-dix"},
+  {k:"팔십",r:"palsip",f:"Quatre-vingts"},
+  {k:"구십",r:"gusip",f:"Quatre-vingt-dix"},
+  {k:"억",r:"eok",f:"Cent millions"},
+  {k:"첫번째",r:"cheotbeonjjae",f:"Premier"},
+  {k:"두번째",r:"dubeonjjae",f:"Deuxième"},
+  {k:"세번째",r:"sebeonjjae",f:"Troisième"},
+  {k:"스물",r:"seumul",f:"Vingt (coréen natif)"},
+  {k:"서른",r:"seoreun",f:"Trente (coréen natif)"},
+  {k:"마흔",r:"maheun",f:"Quarante (coréen natif)"},
+  {k:"쉰",r:"swin",f:"Cinquante (coréen natif)"},
+  {k:"예순",r:"yesun",f:"Soixante (coréen natif)"},
+  {k:"일흔",r:"ilheun",f:"Soixante-dix (coréen natif)"},
+  {k:"여든",r:"yeodeun",f:"Quatre-vingts (coréen natif)"},
+  {k:"아흔",r:"aheun",f:"Quatre-vingt-dix (coréen natif)"},
+
+  // Classificateurs (compteurs)
+  {k:"개",r:"gae",f:"Objet (classificateur générique)"},
+  {k:"명",r:"myeong",f:"Personne (classificateur)"},
+  {k:"마리",r:"mari",f:"Animal (classificateur)"},
+  {k:"권",r:"gwon",f:"Livre (classificateur)"},
+  {k:"잔",r:"jan",f:"Verre / tasse (classificateur)"},
+  {k:"병",r:"byeong",f:"Bouteille (classificateur)"},
+  {k:"장",r:"jang",f:"Feuille / plat (classificateur)"},
+  {k:"대",r:"dae",f:"Véhicule / appareil (classificateur)"},
+  {k:"번",r:"beon",f:"Fois (classificateur)"},
+  {k:"살",r:"sal",f:"Âge / ans (classificateur)"},
+  {k:"켤레",r:"kyeolle",f:"Paire (chaussures)"},
+
+  // Particules grammaticales de base
+  {k:"은",r:"eun",f:"Particule de thème (après consonne)"},
+  {k:"는",r:"neun",f:"Particule de thème (après voyelle)"},
+  {k:"가",r:"ga",f:"Particule sujet (après voyelle)"},
+  {k:"을",r:"eul",f:"Particule objet (après consonne)"},
+  {k:"를",r:"reul",f:"Particule objet (après voyelle)"},
+  {k:"에",r:"e",f:"Particule de lieu / temps (à, en)"},
+  {k:"에서",r:"eseo",f:"Particule de lieu (dans, à)"},
+  {k:"도",r:"do",f:"Aussi (particule)"},
+  {k:"만",r:"man",f:"Seulement (particule)"},
+  {k:"와",r:"wa",f:"Et / avec (après voyelle)"},
+  {k:"과",r:"gwa",f:"Et / avec (après consonne)"},
+  {k:"하고",r:"hago",f:"Et / avec (oral)"},
+  {k:"로",r:"ro",f:"Vers / avec / par (particule)"},
+  {k:"의",r:"ui",f:"Particule possessive (de)"},
+
+  // Verbes supplémentaires
+  {k:"살다",r:"salda",f:"Vivre"},
+  {k:"죽다",r:"jukda",f:"Mourir"},
+  {k:"있다",r:"itda",f:"Être / avoir / exister"},
+  {k:"없다",r:"eopda",f:"Ne pas avoir / ne pas être"},
+  {k:"되다",r:"doeda",f:"Devenir"},
+  {k:"가르치다",r:"gareuchida",f:"Enseigner"},
+  {k:"배우다",r:"baeuda",f:"Apprendre"},
+  {k:"도와주다",r:"dowajuda",f:"Aider"},
+  {k:"바꾸다",r:"bakkuda",f:"Changer"},
+  {k:"바뀌다",r:"bakkwida",f:"Être changé"},
+  {k:"시작하다",r:"sijakhada",f:"Commencer"},
+  {k:"끝내다",r:"kkeutnaeda",f:"Terminer"},
+  {k:"계속하다",r:"gyesokhada",f:"Continuer"},
+  {k:"멈추다",r:"meomchuda",f:"Arrêter"},
+  {k:"움직이다",r:"umjigida",f:"Bouger"},
+  {k:"던지다",r:"deonjida",f:"Lancer"},
+  {k:"잡다",r:"japda",f:"Attraper"},
+  {k:"놓다",r:"nota",f:"Poser / laisser"},
+  {k:"넣다",r:"neota",f:"Mettre dedans"},
+  {k:"빼다",r:"ppaeda",f:"Retirer / soustraire"},
+  {k:"더하다",r:"deohada",f:"Ajouter"},
+  {k:"나누다",r:"nanuda",f:"Partager / diviser"},
+  {k:"섞다",r:"seokda",f:"Mélanger"},
+  {k:"자르다",r:"jareuda",f:"Couper"},
+  {k:"붙이다",r:"butida",f:"Coller"},
+  {k:"떼다",r:"tteda",f:"Détacher"},
+  {k:"그리다",r:"geurida",f:"Dessiner"},
+  {k:"노래하다",r:"noraehada",f:"Chanter"},
+  {k:"춤추다",r:"chumchuda",f:"Danser"},
+  {k:"운전하다",r:"unjeonhada",f:"Conduire"},
+  {k:"타다",r:"tada",f:"Monter (véhicule) / brûler"},
+  {k:"내리다",r:"naerida",f:"Descendre"},
+  {k:"걸리다",r:"geollida",f:"Prendre (temps) / être accroché"},
+  {k:"걸다",r:"geolda",f:"Accrocher / appeler (téléphone)"},
+  {k:"전화하다",r:"jeonhwahada",f:"Téléphoner"},
+  {k:"문자하다",r:"munjahada",f:"Envoyer un texto"},
+  {k:"보내다",r:"bonaeda",f:"Envoyer"},
+  {k:"잃어버리다",r:"ireobeorida",f:"Perdre (un objet)"},
+  {k:"잊어버리다",r:"ijeobeorida",f:"Oublier"},
+  {k:"기억나다",r:"gieoknada",f:"Se rappeler"},
+  {k:"느끼다",r:"neukkida",f:"Ressentir"},
+  {k:"믿다",r:"mitda",f:"Croire"},
+  {k:"바라다",r:"barada",f:"Souhaiter"},
+  {k:"원하다",r:"wonhada",f:"Vouloir"},
+  {k:"필요하다",r:"piryohada",f:"Avoir besoin"},
+  {k:"싶다",r:"sipda",f:"Vouloir (auxiliaire)"},
+  {k:"가능하다",r:"ganeunghada",f:"Être possible"},
+  {k:"허락하다",r:"heorakhada",f:"Permettre"},
+  {k:"금지하다",r:"geumjihada",f:"Interdire"},
+  {k:"초대하다",r:"chodaehada",f:"Inviter"},
+  {k:"방문하다",r:"bangmunhada",f:"Visiter"},
+  {k:"소개하다",r:"sogaehada",f:"Présenter"},
+  {k:"설명하다",r:"seolmyeonghada",f:"Expliquer"},
+  {k:"이해하다",r:"ihaehada",f:"Comprendre"},
+  {k:"결정하다",r:"gyeoljeonghada",f:"Décider"},
+  {k:"선택하다",r:"seontaekhada",f:"Choisir"},
+  {k:"비교하다",r:"bigyohada",f:"Comparer"},
+  {k:"확인하다",r:"hwaginhada",f:"Vérifier / confirmer"},
+  {k:"준비하다",r:"junbihada",f:"Préparer"},
+  {k:"계획하다",r:"gyehoekhada",f:"Planifier"},
+  {k:"성공하다",r:"seonggonghada",f:"Réussir"},
+  {k:"실패하다",r:"silpaehada",f:"Échouer"},
+  {k:"노력하다",r:"noryeokhada",f:"Faire des efforts"},
+  {k:"연습하다",r:"yeonseuphada",f:"S'entraîner"},
+  {k:"쉬다",r:"swida",f:"Se reposer"},
+  {k:"청소하다",r:"cheongsohada",f:"Nettoyer"},
+  {k:"요리하다",r:"yorihada",f:"Cuisiner"},
+  {k:"빨래하다",r:"ppallaehada",f:"Faire la lessive"},
+  {k:"치우다",r:"chiuda",f:"Ranger"},
+  {k:"정리하다",r:"jeongnihada",f:"Organiser"},
+  {k:"고치다",r:"gochida",f:"Réparer"},
+  {k:"망가지다",r:"manggajida",f:"Se casser (objet)"},
+  {k:"깨지다",r:"kkaejida",f:"Se briser"},
+  {k:"부수다",r:"busuda",f:"Casser (quelque chose)"},
+  {k:"켜다",r:"kyeoda",f:"Allumer"},
+  {k:"끄다",r:"kkeuda",f:"Éteindre"},
+  {k:"열리다",r:"yeollida",f:"S'ouvrir"},
+  {k:"닫히다",r:"dachida",f:"Se fermer"},
+  {k:"잠그다",r:"jamgeuda",f:"Verrouiller"},
+  {k:"풀다",r:"pulda",f:"Résoudre / dénouer"},
+  {k:"묻다",r:"mutda",f:"Demander (une question)"},
+  {k:"대답하다",r:"daedaphada",f:"Répondre"},
+  {k:"질문하다",r:"jilmunhada",f:"Poser une question"},
+  {k:"싸우다",r:"ssauda",f:"Se battre / se disputer"},
+  {k:"화해하다",r:"hwahaehada",f:"Se réconcilier"},
+  {k:"용서하다",r:"yongseohada",f:"Pardonner"},
+  {k:"사과하다",r:"sagwahada",f:"S'excuser"},
+  {k:"축하하다",r:"chukhahada",f:"Féliciter"},
+  {k:"놀라다",r:"nollada",f:"Être surpris"},
+  {k:"걱정하다",r:"geokjeonghada",f:"S'inquiéter"},
+  {k:"긴장하다",r:"ginjanghada",f:"Être nerveux"},
+  {k:"안심하다",r:"ansimhada",f:"Se rassurer"},
+  {k:"후회하다",r:"huhoehada",f:"Regretter"},
+  {k:"포기하다",r:"pogihada",f:"Abandonner"},
+  {k:"참다",r:"chamda",f:"Supporter / endurer"},
+  {k:"견디다",r:"gyeondida",f:"Endurer"},
+  {k:"극복하다",r:"geukbokhada",f:"Surmonter"},
+
+  // Adjectifs supplémentaires
+  {k:"길다",r:"gilda",f:"Long"},
+  {k:"짧다",r:"jjalda",f:"Court"},
+  {k:"넓다",r:"neolda",f:"Large"},
+  {k:"좁다",r:"jopda",f:"Étroit"},
+  {k:"높다",r:"nopda",f:"Haut"},
+  {k:"낮다",r:"natda",f:"Bas"},
+  {k:"깊다",r:"gipda",f:"Profond"},
+  {k:"얕다",r:"yatda",f:"Peu profond"},
+  {k:"무겁다",r:"mugeopda",f:"Lourd"},
+  {k:"가볍다",r:"gabyeopda",f:"Léger"},
+  {k:"두껍다",r:"dukkeopda",f:"Épais"},
+  {k:"얇다",r:"yalda",f:"Fin / mince"},
+  {k:"강하다",r:"ganghada",f:"Fort"},
+  {k:"약하다",r:"yakhada",f:"Faible"},
+  {k:"똑똑하다",r:"ttokttokhada",f:"Intelligent"},
+  {k:"어리석다",r:"eoriseokda",f:"Stupide"},
+  {k:"친절하다",r:"chinjeolhada",f:"Gentil"},
+  {k:"불친절하다",r:"bulchinjeolhada",f:"Impoli"},
+  {k:"착하다",r:"chakhada",f:"Gentil / bon (caractère)"},
+  {k:"성실하다",r:"seongsilhada",f:"Sérieux / consciencieux"},
+  {k:"게으르다",r:"geeureuda",f:"Paresseux"},
+  {k:"부지런하다",r:"bujireonhada",f:"Travailleur / assidu"},
+  {k:"용감하다",r:"yonggamhada",f:"Courageux"},
+  {k:"조용하다",r:"joyonghada",f:"Calme / silencieux"},
+  {k:"시끄럽다",r:"sikkeureopda",f:"Bruyant"},
+  {k:"편안하다",r:"pyeonanhada",f:"Confortable"},
+  {k:"불편하다",r:"bulpyeonhada",f:"Inconfortable"},
+  {k:"깨끗하다",r:"kkaekkeutada",f:"Propre"},
+  {k:"더럽다",r:"deoreopda",f:"Sale"},
+  {k:"안전하다",r:"anjeonhada",f:"Sûr / en sécurité"},
+  {k:"위험하다",r:"wiheomhada",f:"Dangereux"},
+  {k:"가깝다",r:"gakkapda",f:"Proche"},
+  {k:"멀다",r:"meolda",f:"Loin"},
+  {k:"따뜻하다",r:"ttatteutada",f:"Chaud (agréable)"},
+  {k:"시원하다",r:"siwonhada",f:"Frais / rafraîchissant"},
+  {k:"춥다",r:"chupda",f:"Froid (température ambiante)"},
+  {k:"덥다",r:"deopda",f:"Chaud (température ambiante)"},
+  {k:"건조하다",r:"geonjohada",f:"Sec"},
+  {k:"습하다",r:"seupada",f:"Humide"},
+  {k:"복잡하다",r:"bokjaphada",f:"Compliqué / animé"},
+  {k:"간단하다",r:"gandanhada",f:"Simple"},
+  {k:"유명하다",r:"yumyeonghada",f:"Célèbre"},
+  {k:"특별하다",r:"teukbyeolhada",f:"Spécial"},
+  {k:"평범하다",r:"pyeongbeomhada",f:"Ordinaire"},
+  {k:"중요하다",r:"jungyohada",f:"Important"},
+  {k:"불가능하다",r:"bulganeunghada",f:"Impossible"},
+  {k:"확실하다",r:"hwaksilhada",f:"Certain"},
+  {k:"이상하다",r:"isanghada",f:"Étrange"},
+  {k:"당연하다",r:"dangyeonhada",f:"Évident / naturel"},
+  {k:"편리하다",r:"pyeollihada",f:"Pratique"},
+  {k:"심심하다",r:"simsimhada",f:"S'ennuyer / ennuyeux"},
+  {k:"불행하다",r:"bulhaenghada",f:"Malheureux"},
+  {k:"외롭다",r:"oeropda",f:"Seul (solitude)"},
+  {k:"그립다",r:"geuripda",f:"Manquer (à quelqu'un)"},
+  {k:"자랑스럽다",r:"jarangseureopda",f:"Fier"},
+  {k:"부럽다",r:"bureopda",f:"Envieux / jaloux (bon sens)"},
+  {k:"귀엽다",r:"gwiyeopda",f:"Mignon"},
+  {k:"멋있다",r:"meositda",f:"Cool / élégant"},
+  {k:"아름답다",r:"areumdapda",f:"Beau / magnifique"},
+  {k:"못생기다",r:"motsaengida",f:"Laid"},
+
+  // Légumes
+  {k:"양파",r:"yangpa",f:"Oignon"},
+  {k:"마늘",r:"maneul",f:"Ail"},
+  {k:"당근",r:"danggeun",f:"Carotte"},
+  {k:"감자",r:"gamja",f:"Pomme de terre"},
+  {k:"고구마",r:"goguma",f:"Patate douce"},
+  {k:"오이",r:"oi",f:"Concombre"},
+  {k:"토마토",r:"tomato",f:"Tomate"},
+  {k:"배추",r:"baechu",f:"Chou chinois"},
+  {k:"상추",r:"sangchu",f:"Laitue"},
+  {k:"버섯",r:"beoseot",f:"Champignon"},
+  {k:"파",r:"pa",f:"Ciboule / poireau"},
+  {k:"고추",r:"gochu",f:"Piment"},
+  {k:"호박",r:"hobak",f:"Courge / citrouille"},
+  {k:"콩",r:"kong",f:"Haricot / soja"},
+  {k:"옥수수",r:"oksusu",f:"Maïs"},
+  {k:"브로콜리",r:"beurokolli",f:"Brocoli"},
+  {k:"시금치",r:"sigeumchi",f:"Épinard"},
+  {k:"가지",r:"gaji",f:"Aubergine"},
+  {k:"무",r:"mu",f:"Radis blanc"},
+  {k:"양배추",r:"yangbaechu",f:"Chou"},
+
+  // Plats et cuisine coréenne
+  {k:"비빔밥",r:"bibimbap",f:"Riz mélangé"},
+  {k:"불고기",r:"bulgogi",f:"Bœuf mariné grillé"},
+  {k:"삼겹살",r:"samgyeopsal",f:"Poitrine de porc grillée"},
+  {k:"갈비",r:"galbi",f:"Côtes marinées grillées"},
+  {k:"잡채",r:"japchae",f:"Nouilles de patate douce sautées"},
+  {k:"떡볶이",r:"tteokbokki",f:"Gâteaux de riz épicés"},
+  {k:"순두부찌개",r:"sundubu jjigae",f:"Ragoût de tofu mou"},
+  {k:"김밥",r:"gimbap",f:"Rouleau de riz et algue"},
+  {k:"전",r:"jeon",f:"Galette coréenne"},
+  {k:"만두",r:"mandu",f:"Raviolis coréens"},
+  {k:"냉면",r:"naengmyeon",f:"Nouilles froides"},
+  {k:"삼계탕",r:"samgyetang",f:"Soupe de poulet au ginseng"},
+  {k:"된장찌개",r:"doenjang jjigae",f:"Ragoût de pâte de soja"},
+  {k:"간식",r:"gansik",f:"Collation"},
+  {k:"후식",r:"husik",f:"Dessert"},
+  {k:"디저트",r:"dijeoteu",f:"Dessert"},
+  {k:"반찬",r:"banchan",f:"Accompagnements"},
+  {k:"젓갈",r:"jeotgal",f:"Fruits de mer fermentés"},
+  {k:"장아찌",r:"jangajji",f:"Légumes marinés"},
+  {k:"양념",r:"yangnyeom",f:"Assaisonnement"},
+
+  // Boissons
+  {k:"녹차",r:"nokcha",f:"Thé vert"},
+  {k:"주스",r:"juseu",f:"Jus"},
+  {k:"탄산음료",r:"tansaneumnyo",f:"Boisson gazeuse"},
+  {k:"소주",r:"soju",f:"Soju (alcool coréen)"},
+  {k:"막걸리",r:"makgeolli",f:"Vin de riz coréen"},
+  {k:"와인",r:"wain",f:"Vin"},
+  {k:"생수",r:"saengsu",f:"Eau minérale"},
+  {k:"얼음물",r:"eoreummul",f:"Eau glacée"},
+  {k:"온수",r:"onsu",f:"Eau chaude"},
+  {k:"탄산수",r:"tansansu",f:"Eau gazeuse"},
+
+  // Vêtements et accessoires supplémentaires
+  {k:"속옷",r:"sogot",f:"Sous-vêtements"},
+  {k:"잠옷",r:"jamot",f:"Pyjama"},
+  {k:"수영복",r:"suyeongbok",f:"Maillot de bain"},
+  {k:"정장",r:"jeongjang",f:"Costume"},
+  {k:"청바지",r:"cheongbaji",f:"Jean"},
+  {k:"반바지",r:"banbaji",f:"Short"},
+  {k:"원피스",r:"wonpiseu",f:"Robe"},
+  {k:"넥타이",r:"nektai",f:"Cravate"},
+  {k:"벨트",r:"belteu",f:"Ceinture"},
+  {k:"목걸이",r:"mokgeori",f:"Collier"},
+  {k:"반지",r:"banji",f:"Bague"},
+  {k:"귀걸이",r:"gwigeori",f:"Boucles d'oreilles"},
+  {k:"팔찌",r:"paljji",f:"Bracelet"},
+  {k:"손수건",r:"sonsugeon",f:"Mouchoir"},
+  {k:"지퍼",r:"jipeo",f:"Fermeture éclair"},
+
+  // Couleurs supplémentaires
+  {k:"회색",r:"hoesaek",f:"Gris"},
+  {k:"금색",r:"geumsaek",f:"Doré"},
+  {k:"은색",r:"eunsaek",f:"Argenté"},
+  {k:"하늘색",r:"haneulsaek",f:"Bleu ciel"},
+  {k:"연두색",r:"yeondusaek",f:"Vert clair"},
+
+  // Famille élargie
+  {k:"사촌",r:"sachon",f:"Cousin"},
+  {k:"조카",r:"joka",f:"Neveu / nièce"},
+  {k:"며느리",r:"myeoneuri",f:"Belle-fille"},
+  {k:"사위",r:"sawi",f:"Gendre"},
+  {k:"시어머니",r:"sieomeoni",f:"Belle-mère (côté mari)"},
+  {k:"장모",r:"jangmo",f:"Belle-mère (côté épouse)"},
+  {k:"쌍둥이",r:"ssangdungi",f:"Jumeaux"},
+  {k:"막내",r:"magnae",f:"Benjamin / cadet"},
+  {k:"장남",r:"jangnam",f:"Fils aîné"},
+  {k:"장녀",r:"jangnyeo",f:"Fille aînée"},
+
+  // Corps humain supplémentaire
+  {k:"피부",r:"pibu",f:"Peau"},
+  {k:"뼈",r:"ppyeo",f:"Os"},
+  {k:"근육",r:"geunyuk",f:"Muscle"},
+  {k:"심장",r:"simjang",f:"Cœur (organe)"},
+  {k:"폐",r:"pye",f:"Poumon"},
+  {k:"간",r:"gan",f:"Foie"},
+  {k:"피",r:"pi",f:"Sang"},
+  {k:"머리카락",r:"meorikarak",f:"Cheveux"},
+  {k:"눈썹",r:"nunsseop",f:"Sourcil"},
+
+  // Animaux supplémentaires
+  {k:"여우",r:"yeou",f:"Renard"},
+  {k:"늑대",r:"neukdae",f:"Loup"},
+  {k:"사슴",r:"saseum",f:"Cerf"},
+  {k:"다람쥐",r:"daramjwi",f:"Écureuil"},
+  {k:"고슴도치",r:"goseumdochi",f:"Hérisson"},
+  {k:"박쥐",r:"bakjwi",f:"Chauve-souris"},
+  {k:"독수리",r:"doksuri",f:"Aigle"},
+  {k:"부엉이",r:"bueongi",f:"Hibou"},
+  {k:"까마귀",r:"kkamagwi",f:"Corbeau"},
+  {k:"비둘기",r:"bidulgi",f:"Pigeon"},
+  {k:"참새",r:"chamsae",f:"Moineau"},
+  {k:"공작",r:"gongjak",f:"Paon"},
+  {k:"악어",r:"ageo",f:"Crocodile"},
+  {k:"거북이",r:"geobugi",f:"Tortue"},
+  {k:"상어",r:"sangeo",f:"Requin"},
+  {k:"고래",r:"gorae",f:"Baleine"},
+  {k:"문어",r:"muneo",f:"Poulpe"},
+  {k:"오징어",r:"ojingeo",f:"Calamar"},
+  {k:"새우",r:"saeu",f:"Crevette"},
+  {k:"게",r:"ge",f:"Crabe"},
+
+  // Nature et géographie supplémentaires
+  {k:"섬",r:"seom",f:"Île"},
+  {k:"호수",r:"hosu",f:"Lac"},
+  {k:"계곡",r:"gyegok",f:"Vallée"},
+  {k:"폭포",r:"pokpo",f:"Cascade"},
+  {k:"사막",r:"samak",f:"Désert"},
+  {k:"화산",r:"hwasan",f:"Volcan"},
+  {k:"지진",r:"jijin",f:"Tremblement de terre"},
+  {k:"태풍",r:"taepung",f:"Typhon"},
+  {k:"무지개",r:"mujigae",f:"Arc-en-ciel"},
+  {k:"번개",r:"beongae",f:"Éclair"},
+  {k:"천둥",r:"cheondung",f:"Tonnerre"},
+  {k:"안개",r:"angae",f:"Brouillard"},
+  {k:"이슬",r:"iseul",f:"Rosée"},
+  {k:"서리",r:"seori",f:"Givre"},
+  {k:"우박",r:"ubak",f:"Grêle"},
+
+  // École et fournitures supplémentaires
+  {k:"지우개",r:"jiugae",f:"Gomme"},
+  {k:"가위",r:"gawi",f:"Ciseaux"},
+  {k:"자",r:"ja",f:"Règle (outil)"},
+  {k:"필통",r:"piltong",f:"Trousse"},
+  {k:"교과서",r:"gyogwaseo",f:"Manuel scolaire"},
+  {k:"사전",r:"sajeon",f:"Dictionnaire"},
+  {k:"성적표",r:"seongjeokpyo",f:"Bulletin de notes"},
+  {k:"졸업",r:"joreop",f:"Remise de diplôme"},
+  {k:"입학",r:"iphak",f:"Entrée à l'école"},
+  {k:"방학",r:"banghak",f:"Vacances scolaires"},
+  {k:"수업",r:"sueop",f:"Cours / leçon"},
+  {k:"발표하다",r:"balpyohada",f:"Faire une présentation"},
+  {k:"암기하다",r:"amgihada",f:"Mémoriser"},
+
+  // Travail et bureau
+  {k:"회사",r:"hoesa",f:"Entreprise"},
+  {k:"사무실",r:"samusil",f:"Bureau (lieu)"},
+  {k:"직장",r:"jikjang",f:"Lieu de travail"},
+  {k:"직원",r:"jigwon",f:"Employé"},
+  {k:"사장",r:"sajang",f:"Patron / PDG"},
+  {k:"동료",r:"dongnyo",f:"Collègue"},
+  {k:"월급",r:"wolgeup",f:"Salaire mensuel"},
+  {k:"보너스",r:"boneoseu",f:"Prime"},
+  {k:"휴가",r:"hyuga",f:"Congé"},
+  {k:"출근",r:"chulgeun",f:"Aller au travail"},
+  {k:"퇴근",r:"toegeun",f:"Quitter le travail"},
+  {k:"회의실",r:"hoeuisil",f:"Salle de réunion"},
+  {k:"서류",r:"seoryu",f:"Document"},
+  {k:"계약",r:"gyeyak",f:"Contrat"},
+  {k:"프로젝트",r:"peurojekteu",f:"Projet"},
+  {k:"이력서",r:"iryeokseo",f:"CV"},
+  {k:"면접",r:"myeonjeop",f:"Entretien d'embauche"},
+  {k:"승진",r:"seungjin",f:"Promotion"},
+  {k:"은퇴",r:"euntoe",f:"Retraite"},
+  {k:"사업",r:"saeop",f:"Affaires / entreprise"},
+
+  // Voyage et tourisme
+  {k:"관광",r:"gwangwang",f:"Tourisme"},
+  {k:"관광객",r:"gwangwanggaek",f:"Touriste"},
+  {k:"안내소",r:"annaeso",f:"Bureau d'information"},
+  {k:"가이드",r:"gaideu",f:"Guide (touristique)"},
+  {k:"숙소",r:"sukso",f:"Hébergement"},
+  {k:"편도",r:"pyeondo",f:"Aller simple"},
+  {k:"왕복",r:"wangbok",f:"Aller-retour"},
+  {k:"탑승",r:"tapseung",f:"Embarquement"},
+  {k:"승객",r:"seunggaek",f:"Passager"},
+  {k:"좌석",r:"jwaseok",f:"Siège"},
+  {k:"창가",r:"changga",f:"Côté fenêtre"},
+  {k:"통로",r:"tongno",f:"Couloir / allée"},
+  {k:"환승",r:"hwanseung",f:"Correspondance (transport)"},
+  {k:"시차",r:"sicha",f:"Décalage horaire"},
+  {k:"기념품",r:"ginyeompum",f:"Souvenir"},
+  {k:"국내",r:"gungnae",f:"National / intérieur"},
+  {k:"해외",r:"haeoe",f:"Étranger"},
+  {k:"국제",r:"gukje",f:"International"},
+  {k:"대사관",r:"daesagwan",f:"Ambassade"},
+  {k:"통역",r:"tongyeok",f:"Traduction orale"},
+
+  // Argent et shopping supplémentaires
+  {k:"가격",r:"gagyeok",f:"Prix"},
+  {k:"무료",r:"muryo",f:"Gratuit"},
+  {k:"유료",r:"yuryo",f:"Payant"},
+  {k:"세일",r:"seil",f:"Solde"},
+  {k:"환불",r:"hwanbul",f:"Remboursement"},
+  {k:"교환",r:"gyohwan",f:"Échange"},
+  {k:"포장",r:"pojang",f:"Emballage"},
+  {k:"배달",r:"baedal",f:"Livraison"},
+  {k:"주문",r:"jumun",f:"Commande"},
+  {k:"품절",r:"pumjeol",f:"Rupture de stock"},
+  {k:"저렴하다",r:"jeoryeomhada",f:"Être bon marché"},
+  {k:"값",r:"gap",f:"Prix / valeur"},
+  {k:"세금",r:"segeum",f:"Taxe"},
+  {k:"저축",r:"jeochuk",f:"Épargne"},
+  {k:"투자",r:"tuja",f:"Investissement"},
+  {k:"빚",r:"bit",f:"Dette"},
+  {k:"부자",r:"buja",f:"Riche"},
+  {k:"가난하다",r:"gananhada",f:"Pauvre"},
+  {k:"월세",r:"wolse",f:"Loyer mensuel"},
+  {k:"대출",r:"daechul",f:"Prêt"},
+
+  // Sentiments et personnalité supplémentaires
+  {k:"성격",r:"seonggyeok",f:"Personnalité"},
+  {k:"기분",r:"gibun",f:"Humeur"},
+  {k:"스트레스",r:"seuteureseu",f:"Stress"},
+  {k:"외향적",r:"oehyangjeok",f:"Extraverti"},
+  {k:"내향적",r:"naehyangjeok",f:"Introverti"},
+  {k:"낙천적",r:"nakcheonjeok",f:"Optimiste"},
+  {k:"비관적",r:"bigwanjeok",f:"Pessimiste"},
+  {k:"자신",r:"jasin",f:"Soi-même / confiance"},
+  {k:"자존감",r:"jajongam",f:"Estime de soi"},
+  {k:"질투",r:"jiltu",f:"Jalousie"},
+  {k:"후회",r:"huhoe",f:"Regret"},
+  {k:"만족",r:"manjok",f:"Satisfaction"},
+  {k:"불만",r:"bulman",f:"Mécontentement"},
+  {k:"호기심",r:"hogisim",f:"Curiosité"},
+  {k:"관심",r:"gwansim",f:"Intérêt"},
+  {k:"흥미",r:"heungmi",f:"Intérêt / engouement"},
+  {k:"감동",r:"gamdong",f:"Émotion / être touché"},
+  {k:"실망",r:"silmang",f:"Déception"},
+  {k:"긴장",r:"ginjang",f:"Tension / nervosité"},
+
+  // Santé et médical supplémentaires
+  {k:"병",r:"byeong",f:"Maladie"},
+  {k:"증상",r:"jeungsang",f:"Symptôme"},
+  {k:"치료",r:"chiryo",f:"Traitement"},
+  {k:"주사",r:"jusa",f:"Piqûre / injection"},
+  {k:"진찰",r:"jinchal",f:"Consultation médicale"},
+  {k:"처방전",r:"cheobangjeon",f:"Ordonnance"},
+  {k:"알레르기",r:"allereugi",f:"Allergie"},
+  {k:"상처",r:"sangcheo",f:"Blessure"},
+  {k:"멍",r:"meong",f:"Bleu (ecchymose)"},
+  {k:"붓다",r:"butda",f:"Enfler"},
+  {k:"어지럽다",r:"eojireopda",f:"Avoir le vertige"},
+  {k:"토하다",r:"tohada",f:"Vomir"},
+  {k:"설사",r:"seolsa",f:"Diarrhée"},
+  {k:"변비",r:"byeonbi",f:"Constipation"},
+  {k:"소화",r:"sohwa",f:"Digestion"},
+  {k:"혈압",r:"hyeorap",f:"Tension artérielle"},
+  {k:"당뇨병",r:"dangnyobyeong",f:"Diabète"},
+  {k:"암",r:"am",f:"Cancer"},
+  {k:"백신",r:"baeksin",f:"Vaccin"},
+  {k:"응급실",r:"eunggeupsil",f:"Urgences (hôpital)"},
+
+  // Météo supplémentaire
+  {k:"맑다",r:"makda",f:"Être clair / ensoleillé"},
+  {k:"흐리다",r:"heurida",f:"Être nuageux"},
+  {k:"소나기",r:"sonagi",f:"Averse"},
+  {k:"장마",r:"jangma",f:"Saison des pluies"},
+  {k:"폭염",r:"pogyeom",f:"Canicule"},
+  {k:"한파",r:"hanpa",f:"Vague de froid"},
+  {k:"습도",r:"seupdo",f:"Humidité (taux)"},
+  {k:"기온",r:"gion",f:"Température (air)"},
+  {k:"예보",r:"yebo",f:"Prévision"},
+  {k:"기상청",r:"gisangcheong",f:"Service météorologique"},
+
+  // Sports supplémentaires
+  {k:"배구",r:"baegu",f:"Volley-ball"},
+  {k:"탁구",r:"takgu",f:"Tennis de table"},
+  {k:"테니스",r:"teniseu",f:"Tennis"},
+  {k:"골프",r:"golpeu",f:"Golf"},
+  {k:"스키",r:"seuki",f:"Ski"},
+  {k:"스노보드",r:"seunobodeu",f:"Snowboard"},
+  {k:"태권도",r:"taekwondo",f:"Taekwondo"},
+  {k:"유도",r:"yudo",f:"Judo"},
+  {k:"복싱",r:"boksing",f:"Boxe"},
+  {k:"요가",r:"yoga",f:"Yoga"},
+  {k:"헬스",r:"helseu",f:"Musculation / fitness"},
+  {k:"경기",r:"gyeonggi",f:"Match / compétition"},
+  {k:"선수",r:"seonsu",f:"Athlète"},
+  {k:"팀",r:"tim",f:"Équipe"},
+  {k:"우승",r:"useung",f:"Victoire / championnat"},
+
+  // Musique et loisirs supplémentaires
+  {k:"악기",r:"akgi",f:"Instrument de musique"},
+  {k:"피아노",r:"piano",f:"Piano"},
+  {k:"기타",r:"gita",f:"Guitare"},
+  {k:"드럼",r:"deureom",f:"Batterie"},
+  {k:"바이올린",r:"baiollin",f:"Violon"},
+  {k:"콘서트",r:"konseoteu",f:"Concert"},
+  {k:"가사",r:"gasa",f:"Paroles (chanson)"},
+  {k:"드라마",r:"deurama",f:"Drame / série télé"},
+  {k:"만화",r:"manhwa",f:"Bande dessinée"},
+  {k:"소설",r:"soseol",f:"Roman"},
+  {k:"시",r:"si",f:"Poème"},
+  {k:"전시회",r:"jeonsihoe",f:"Exposition"},
+  {k:"박물관",r:"bangmulgwan",f:"Musée"},
+  {k:"공연",r:"gongyeon",f:"Spectacle"},
+  {k:"축제",r:"chukje",f:"Festival"},
+
+  // Technologie supplémentaire
+  {k:"스마트폰",r:"seumateupon",f:"Smartphone"},
+  {k:"애플리케이션",r:"aepeullikeisyeon",f:"Application"},
+  {k:"앱",r:"aep",f:"Appli"},
+  {k:"웹사이트",r:"wepsaiteu",f:"Site web"},
+  {k:"소프트웨어",r:"sopeuteuweeo",f:"Logiciel"},
+  {k:"파일",r:"pail",f:"Fichier"},
+  {k:"폴더",r:"poldeo",f:"Dossier (informatique)"},
+  {k:"와이파이",r:"waipai",f:"Wifi"},
+  {k:"블루투스",r:"beulluteuseu",f:"Bluetooth"},
+  {k:"다운로드",r:"daunrodeu",f:"Téléchargement"},
+  {k:"업로드",r:"eomnodeu",f:"Envoi (upload)"},
+  {k:"설치",r:"seolchi",f:"Installation"},
+  {k:"삭제",r:"sakje",f:"Suppression"},
+  {k:"저장",r:"jeojang",f:"Sauvegarde"},
+  {k:"알림",r:"allim",f:"Notification"},
+
+  // Maison et meubles supplémentaires
+  {k:"서랍",r:"seorap",f:"Tiroir"},
+  {k:"옷장",r:"otjang",f:"Armoire"},
+  {k:"선반",r:"seonban",f:"Étagère"},
+  {k:"커튼",r:"keoteun",f:"Rideau"},
+  {k:"카펫",r:"kapet",f:"Tapis"},
+  {k:"베개",r:"baegae",f:"Oreiller"},
+  {k:"이불",r:"ibul",f:"Couverture"},
+  {k:"매트리스",r:"maeteuriseu",f:"Matelas"},
+  {k:"전등",r:"jeondeung",f:"Lampe"},
+  {k:"스위치",r:"seuwichi",f:"Interrupteur"},
+  {k:"계단",r:"gyedan",f:"Escalier"},
+  {k:"지붕",r:"jibung",f:"Toit"},
+  {k:"벽",r:"byeok",f:"Mur"},
+  {k:"바닥",r:"badak",f:"Sol"},
+  {k:"정원",r:"jeongwon",f:"Jardin"},
+
+  // Ville et directions supplémentaires
+  {k:"도시",r:"dosi",f:"Ville"},
+  {k:"시골",r:"sigol",f:"Campagne"},
+  {k:"거리",r:"geori",f:"Rue"},
+  {k:"사거리",r:"sageori",f:"Carrefour"},
+  {k:"신호등",r:"sinhodeung",f:"Feu de circulation"},
+  {k:"횡단보도",r:"hoengdanbodo",f:"Passage piéton"},
+  {k:"인도",r:"indo",f:"Trottoir"},
+  {k:"동쪽",r:"dongjjok",f:"Est"},
+  {k:"서쪽",r:"seojjok",f:"Ouest"},
+  {k:"남쪽",r:"namjjok",f:"Sud"},
+  {k:"북쪽",r:"bukjjok",f:"Nord"},
+  {k:"근처",r:"geuncheo",f:"Environs / à proximité"},
+  {k:"건너편",r:"geonneopyeon",f:"En face"},
+  {k:"모퉁이",r:"motungi",f:"Coin (de rue)"},
+  {k:"빌딩",r:"bilding",f:"Immeuble / bâtiment"},
+
+  // Temps et dates supplémentaires
+  {k:"매일",r:"maeil",f:"Chaque jour"},
+  {k:"매주",r:"maeju",f:"Chaque semaine"},
+  {k:"매달",r:"maedal",f:"Chaque mois"},
+  {k:"매년",r:"maenyeon",f:"Chaque année"},
+  {k:"평일",r:"pyeongil",f:"Jour de semaine"},
+  {k:"휴일",r:"hyuil",f:"Jour férié"},
+  {k:"새벽",r:"saebyeok",f:"Aube"},
+  {k:"정오",r:"jeongo",f:"Midi"},
+  {k:"자정",r:"jajeong",f:"Minuit"},
+  {k:"날짜",r:"nalja",f:"Date"},
+
+  // Adverbes et connecteurs supplémentaires
+  {k:"결국",r:"gyeolguk",f:"Finalement"},
+  {k:"어쨌든",r:"eojjaetdeun",f:"De toute façon"},
+  {k:"오히려",r:"ohiryeo",f:"Plutôt / au contraire"},
+  {k:"반면에",r:"banmyeone",f:"En revanche"},
+  {k:"게다가",r:"gedaga",f:"De plus"},
+  {k:"따라서",r:"ttaraseo",f:"Par conséquent"},
+  {k:"예",r:"ye",f:"Exemple"},
+  {k:"실제로",r:"siljero",f:"En réalité"},
+  {k:"당장",r:"dangjang",f:"Immédiatement"},
+  {k:"곧",r:"got",f:"Bientôt"},
+
+  // Expressions courantes et politesse
+  {k:"반갑다",r:"bangapda",f:"Être ravi (de rencontrer)"},
+  {k:"축하",r:"chukha",f:"Félicitations"},
+  {k:"환영",r:"hwanyeong",f:"Bienvenue"},
+  {k:"수고",r:"sugo",f:"Effort (expression de remerciement)"},
+  {k:"건배",r:"geonbae",f:"Santé ! (toast)"},
+  {k:"화이팅",r:"hwaiting",f:"Courage ! / allez !"},
+  {k:"대박",r:"daebak",f:"Génial / incroyable (familier)"},
+  {k:"진짜",r:"jinjja",f:"Vraiment / vrai"},
+  {k:"당연히",r:"dangyeonhi",f:"Bien sûr / évidemment"},
+  {k:"제발",r:"jebal",f:"S'il te plaît (supplication)"},
+
+  // Métiers supplémentaires
+  {k:"교수",r:"gyosu",f:"Professeur d'université"},
+  {k:"공무원",r:"gongmuwon",f:"Fonctionnaire"},
+  {k:"사업가",r:"saeopga",f:"Homme / femme d'affaires"},
+  {k:"디자이너",r:"dijaineo",f:"Designer"},
+  {k:"프로그래머",r:"peurogeuraemeo",f:"Programmeur"},
+  {k:"엔지니어",r:"enjinieo",f:"Ingénieur"},
+  {k:"회계사",r:"hoegyesa",f:"Comptable"},
+  {k:"비서",r:"biseo",f:"Secrétaire"},
+  {k:"미용사",r:"miyongsa",f:"Coiffeur"},
+  {k:"점원",r:"jeomwon",f:"Vendeur / employé de magasin"},
+
+  // Transports supplémentaires
+  {k:"정류장",r:"jeongnyujang",f:"Arrêt de bus"},
+  {k:"플랫폼",r:"peullaespom",f:"Quai (gare)"},
+  {k:"표",r:"pyo",f:"Billet / ticket"},
+  {k:"승차권",r:"seungchagwon",f:"Titre de transport"},
+  {k:"운전면허",r:"unjeonmyeonheo",f:"Permis de conduire"},
+  {k:"주차장",r:"juchajang",f:"Parking"},
+  {k:"신호",r:"sinho",f:"Signal"},
+  {k:"속도",r:"sokdo",f:"Vitesse"},
+  {k:"교통",r:"gyotong",f:"Circulation / transport"},
+  {k:"교통체증",r:"gyotongchejeung",f:"Embouteillage"},
+];
+
+// ============================================================
+// JAMO (voyelles / consonnes) - pour le Mode 0
+// ============================================================
+const jamoList = [
+  // Consonnes de base (자음)
+  {k:"ㄱ",r:"g/k",f:"Consonne 'g/k'",type:"consonne"},
+  {k:"ㄴ",r:"n",f:"Consonne 'n'",type:"consonne"},
+  {k:"ㄷ",r:"d/t",f:"Consonne 'd/t'",type:"consonne"},
+  {k:"ㄹ",r:"r/l",f:"Consonne 'r/l'",type:"consonne"},
+  {k:"ㅁ",r:"m",f:"Consonne 'm'",type:"consonne"},
+  {k:"ㅂ",r:"b/p",f:"Consonne 'b/p'",type:"consonne"},
+  {k:"ㅅ",r:"s",f:"Consonne 's'",type:"consonne"},
+  {k:"ㅇ",r:"ng / muette",f:"Consonne muette en initiale, 'ng' en finale",type:"consonne"},
+  {k:"ㅈ",r:"j",f:"Consonne 'j'",type:"consonne"},
+  {k:"ㅊ",r:"ch",f:"Consonne 'ch' aspirée",type:"consonne"},
+  {k:"ㅋ",r:"k",f:"Consonne 'k' aspirée",type:"consonne"},
+  {k:"ㅌ",r:"t",f:"Consonne 't' aspirée",type:"consonne"},
+  {k:"ㅍ",r:"p",f:"Consonne 'p' aspirée",type:"consonne"},
+  {k:"ㅎ",r:"h",f:"Consonne 'h'",type:"consonne"},
+  // Consonnes doublées / tendues (쌍자음)
+  {k:"ㄲ",r:"kk",f:"Consonne tendue 'kk'",type:"consonne"},
+  {k:"ㄸ",r:"tt",f:"Consonne tendue 'tt'",type:"consonne"},
+  {k:"ㅃ",r:"pp",f:"Consonne tendue 'pp'",type:"consonne"},
+  {k:"ㅆ",r:"ss",f:"Consonne tendue 'ss'",type:"consonne"},
+  {k:"ㅉ",r:"jj",f:"Consonne tendue 'jj'",type:"consonne"},
+  // Voyelles de base (모음)
+  {k:"ㅏ",r:"a",f:"Voyelle 'a'",type:"voyelle"},
+  {k:"ㅑ",r:"ya",f:"Voyelle 'ya'",type:"voyelle"},
+  {k:"ㅓ",r:"eo",f:"Voyelle 'eo'",type:"voyelle"},
+  {k:"ㅕ",r:"yeo",f:"Voyelle 'yeo'",type:"voyelle"},
+  {k:"ㅗ",r:"o",f:"Voyelle 'o'",type:"voyelle"},
+  {k:"ㅛ",r:"yo",f:"Voyelle 'yo'",type:"voyelle"},
+  {k:"ㅜ",r:"u",f:"Voyelle 'u'",type:"voyelle"},
+  {k:"ㅠ",r:"yu",f:"Voyelle 'yu'",type:"voyelle"},
+  {k:"ㅡ",r:"eu",f:"Voyelle 'eu'",type:"voyelle"},
+  {k:"ㅣ",r:"i",f:"Voyelle 'i'",type:"voyelle"},
+  // Voyelles composées (이중모음)
+  {k:"ㅐ",r:"ae",f:"Voyelle composée 'ae'",type:"voyelle"},
+  {k:"ㅒ",r:"yae",f:"Voyelle composée 'yae'",type:"voyelle"},
+  {k:"ㅔ",r:"e",f:"Voyelle composée 'e'",type:"voyelle"},
+  {k:"ㅖ",r:"ye",f:"Voyelle composée 'ye'",type:"voyelle"},
+  {k:"ㅘ",r:"wa",f:"Voyelle composée 'wa'",type:"voyelle"},
+  {k:"ㅙ",r:"wae",f:"Voyelle composée 'wae'",type:"voyelle"},
+  {k:"ㅚ",r:"oe",f:"Voyelle composée 'oe'",type:"voyelle"},
+  {k:"ㅝ",r:"wo",f:"Voyelle composée 'wo'",type:"voyelle"},
+  {k:"ㅞ",r:"we",f:"Voyelle composée 'we'",type:"voyelle"},
+  {k:"ㅟ",r:"wi",f:"Voyelle composée 'wi'",type:"voyelle"},
+  {k:"ㅢ",r:"ui",f:"Voyelle composée 'ui'",type:"voyelle"},
+];
+
+// ============================================================
+// CLAVIER CORÉEN VIRTUEL
+// ============================================================
+const keyboard = {
+    initial: {
+        label: "Consonnes initiales",
+        keys: [
+            ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ'],
+            ['ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄸ','ㅃ','ㅆ','ㅉ']
+        ]
+    },
+    vowel: {
+        label: "Voyelles",
+        keys: [
+            ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅛ'],
+            ['ㅜ','ㅠ','ㅡ','ㅣ','ㅘ','ㅙ','ㅚ','ㅝ','ㅞ','ㅟ','ㅢ']
+        ]
+    },
+    final: {
+        label: "Consonnes finales (batchim)",
+        keys: [
+            ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ'],
+            ['ㅋ','ㅌ','ㅍ','ㅎ','ㄲ','ㄳ','ㄵ','ㄶ','ㄺ','ㄻ'],
+            ['ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ','ㅆ']
+        ]
+    }
+};
+
+// ============================================================
+// ÉTAT DE L'APPLICATION
+// ============================================================
+let currentMode = 1;
+let currentWord = null;
+let usedIndices = [];
+let jamoUsedIndices = [];
+let answered = false;
+let stats = { correct: 0, wrong: 0, total: 0 };
+let currentKbTab = 'initial';
+// Chaque mode garde son propre mot en cours (pour éviter d'avoir le même mot
+// dans les 3 modes en même temps) + son propre état de réponse/feedback.
+let modeState = {
+    0: { word: null, answered: false, correct: null, feedbackHTML: '' },
+    1: { word: null, answered: false, correct: null, feedbackHTML: '' },
+    2: { word: null, answered: false, correct: null, feedbackHTML: '' },
+    3: { word: null, answered: false, correct: null, feedbackHTML: '' },
+    4: { word: null, answered: false, correct: null, feedbackHTML: '' }
+};
+let synth = window.speechSynthesis;
+let koreanVoice = null;
+let speechRequestId = 0;
+let currentOnlineAudio = null;
+
+// ============================================================
+// MOTEUR DE COMPOSITION HANGUL (comme un vrai clavier coréen)
+// ============================================================
+const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const JONG = ['', 'ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const INVALID_JONG_SIMPLE = ['ㄸ','ㅃ','ㅉ']; // consonnes tendues qui n'existent pas en finale
+
+const VOWEL_COMBOS = {'ㅗㅏ':'ㅘ','ㅗㅐ':'ㅙ','ㅗㅣ':'ㅚ','ㅜㅓ':'ㅝ','ㅜㅔ':'ㅞ','ㅜㅣ':'ㅟ','ㅡㅣ':'ㅢ'};
+const VOWEL_DECOMPOSE = {'ㅘ':'ㅗ','ㅙ':'ㅗ','ㅚ':'ㅗ','ㅝ':'ㅜ','ㅞ':'ㅜ','ㅟ':'ㅜ','ㅢ':'ㅡ'};
+const JONG_COMBOS = {'ㄱㅅ':'ㄳ','ㄴㅈ':'ㄵ','ㄴㅎ':'ㄶ','ㄹㄱ':'ㄺ','ㄹㅁ':'ㄻ','ㄹㅂ':'ㄼ','ㄹㅅ':'ㄽ','ㄹㅌ':'ㄾ','ㄹㅍ':'ㄿ','ㄹㅎ':'ㅀ','ㅂㅅ':'ㅄ'};
+const JONG_DECOMPOSE = {'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']};
+
+// État du bloc syllabique en cours de composition (le dernier caractère "ouvert" du champ)
+let compState = { cho: null, jung: null, jong: null };
+
+// Mapping clavier physique QWERTY -> disposition coréenne standard (2-beolsik)
+const QWERTY_TO_HANGUL = {
+    'q':'ㅂ','Q':'ㅃ','w':'ㅈ','W':'ㅉ','e':'ㄷ','E':'ㄸ','r':'ㄱ','R':'ㄲ','t':'ㅅ','T':'ㅆ',
+    'y':'ㅛ','u':'ㅕ','i':'ㅑ','o':'ㅐ','O':'ㅒ','p':'ㅔ','P':'ㅖ',
+    'a':'ㅁ','s':'ㄴ','d':'ㅇ','f':'ㄹ','g':'ㅎ','h':'ㅗ','j':'ㅓ','k':'ㅏ','l':'ㅣ',
+    'z':'ㅋ','x':'ㅌ','c':'ㅊ','v':'ㅍ','b':'ㅠ','n':'ㅜ','m':'ㅡ'
+};
+
+function composeSyllable(choChar, jungChar, jongChar) {
+    const choIdx = CHO.indexOf(choChar);
+    const jungIdx = JUNG.indexOf(jungChar);
+    const jongIdx = jongChar ? JONG.indexOf(jongChar) : 0;
+    if (choIdx === -1 || jungIdx === -1 || jongIdx === -1) return choChar || '';
+    const code = 0xAC00 + (choIdx * 21 + jungIdx) * 28 + jongIdx;
+    return String.fromCharCode(code);
+}
+
+function isValidJong(ch) {
+    if (INVALID_JONG_SIMPLE.includes(ch)) return false;
+    return JONG.includes(ch) && ch !== '';
+}
+
+function resetComp() {
+    compState = { cho: null, jung: null, jong: null };
+}
+
+function commitCurrentBlock() {
+    resetComp();
+}
+
+function renderBlock(state) {
+    if (state.cho !== null && state.jung !== null) {
+        return composeSyllable(state.cho, state.jung, state.jong || '');
+    } else if (state.cho !== null) {
+        return state.cho;
+    }
+    return '';
+}
+
+function rerenderLastBlock() {
+    const input = document.getElementById('answer-input');
+    input.value = input.value.slice(0, -1) + renderBlock(compState);
+}
+
+function appendChar(ch) {
+    document.getElementById('answer-input').value += ch;
+}
+
+function handleConsonant(ch) {
+    const canBeCho = CHO.includes(ch);
+    const canBeJong = isValidJong(ch);
+
+    // Aucun bloc ouvert
+    if (compState.cho === null && compState.jung === null) {
+        if (canBeCho) {
+            compState = { cho: ch, jung: null, jong: null };
+        }
+        appendChar(ch);
+        return;
+    }
+
+    // Consonne initiale seule en attente d'une voyelle
+    if (compState.cho !== null && compState.jung === null) {
+        commitCurrentBlock();
+        if (canBeCho) compState = { cho: ch, jung: null, jong: null };
+        appendChar(ch);
+        return;
+    }
+
+    // Bloc complet (initiale + voyelle) sans finale
+    if (compState.jong === null) {
+        if (canBeJong) {
+            compState.jong = ch;
+            rerenderLastBlock();
+        } else {
+            commitCurrentBlock();
+            if (canBeCho) compState = { cho: ch, jung: null, jong: null };
+            appendChar(ch);
+        }
+        return;
+    }
+
+    // Une finale existe déjà : tenter une finale composée (ex: ㄱ+ㅅ=ㄳ)
+    const combo = JONG_COMBOS[compState.jong + ch];
+    if (combo) {
+        compState.jong = combo;
+        rerenderLastBlock();
+    } else {
+        commitCurrentBlock();
+        if (canBeCho) compState = { cho: ch, jung: null, jong: null };
+        appendChar(ch);
+    }
+}
+
+function handleVowel(ch) {
+    // Aucun bloc ouvert : la voyelle démarre avec une initiale muette (ㅇ)
+    if (compState.cho === null && compState.jung === null) {
+        compState = { cho: 'ㅇ', jung: ch, jong: null };
+        appendChar(composeSyllable('ㅇ', ch));
+        return;
+    }
+
+    // Initiale seule en attente : combine initiale + voyelle
+    if (compState.cho !== null && compState.jung === null) {
+        compState.jung = ch;
+        rerenderLastBlock();
+        return;
+    }
+
+    // Une voyelle existe déjà sans finale : tenter une diphtongue (ex: ㅗ+ㅏ=ㅘ)
+    if (compState.jong === null) {
+        const combo = VOWEL_COMBOS[compState.jung + ch];
+        if (combo) {
+            compState.jung = combo;
+            rerenderLastBlock();
+        } else {
+            commitCurrentBlock();
+            compState = { cho: 'ㅇ', jung: ch, jong: null };
+            appendChar(composeSyllable('ㅇ', ch));
+        }
+        return;
+    }
+
+    // Une finale existe : elle doit "glisser" pour devenir l'initiale du bloc suivant
+    const decomp = JONG_DECOMPOSE[compState.jong];
+    let remainingJong = null, newCho;
+    if (decomp) {
+        remainingJong = decomp[0];
+        newCho = decomp[1];
+    } else {
+        remainingJong = null;
+        newCho = compState.jong;
+    }
+    compState.jong = remainingJong;
+    rerenderLastBlock();
+    commitCurrentBlock();
+    compState = { cho: newCho, jung: ch, jong: null };
+    appendChar(composeSyllable(newCho, ch));
+}
+
+function autoSwitchTab() {
+    let target = currentKbTab;
+    if (compState.cho !== null && compState.jung === null) {
+        target = 'vowel';
+    } else if (compState.cho !== null && compState.jung !== null) {
+        target = 'initial';
+    }
+    if (target !== currentKbTab) {
+        switchKbTab(target);
+    }
+}
+
+// Initialisation voix
+function initVoices() {
+    const voices = synth.getVoices();
+    if (voices.length) {
+        koreanVoice = voices.find(v => v.lang.startsWith('ko')) || null;
+    }
+}
+synth.onvoiceschanged = initVoices;
+initVoices();
+// Filet de sécurité : certains navigateurs (Brave notamment) ne déclenchent pas
+// toujours l'événement onvoiceschanged de façon fiable.
+setTimeout(initVoices, 500);
+setTimeout(initVoices, 1500);
+
+// ============================================================
+// GESTION DES MODES
+// ============================================================
+function setMode(mode) {
+    // Sauvegarde l'état d'entrée en cours du mode qu'on quitte (si pas encore répondu)
+    saveCurrentInputState();
+
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === mode);
+    });
+
+    const state = modeState[mode];
+    if (!state.word) {
+        state.word = pickWordForMode(mode);
+    }
+    currentWord = state.word;
+
+    if (state.answered) {
+        restoreAnsweredUI(mode);
+    } else {
+        setupUIForCurrentWord();
+    }
+}
+
+// ============================================================
+// CHOIX D'UN MOT POUR UN MODE DONNÉ
+// (évite, autant que possible, de reprendre un mot déjà affiché
+// dans un autre mode, pour que les 3 modes montrent des mots différents)
+// ============================================================
+function pickWordForMode(mode) {
+    if (mode === 0) {
+        if (jamoUsedIndices.length >= jamoList.length) {
+            jamoUsedIndices = [];
+        }
+        let jIdx;
+        do {
+            jIdx = Math.floor(Math.random() * jamoList.length);
+        } while (jamoUsedIndices.includes(jIdx));
+        jamoUsedIndices.push(jIdx);
+        return jamoList[jIdx];
+    }
+
+    if (usedIndices.length >= words.length) {
+        usedIndices = [];
+    }
+
+    const otherWordKeys = new Set(
+        Object.keys(modeState)
+            .filter(m => Number(m) !== mode && Number(m) !== 0)
+            .map(m => modeState[m].word)
+            .filter(Boolean)
+            .map(w => w.k)
+    );
+
+    let idx, attempts = 0;
+    do {
+        idx = Math.floor(Math.random() * words.length);
+        attempts++;
+    } while (
+        attempts < 50 &&
+        (usedIndices.includes(idx) || otherWordKeys.has(words[idx].k))
+    );
+
+    usedIndices.push(idx);
+    return words[idx];
+}
+
+// ============================================================
+// MOT SUIVANT (dans le mode actuel uniquement)
+// ============================================================
+function nextWord() {
+    const state = modeState[currentMode];
+    state.word = pickWordForMode(currentMode);
+    state.answered = false;
+    state.correct = null;
+    state.feedbackHTML = '';
+    currentWord = state.word;
+
+    updateProgress();
+    setupUIForCurrentWord();
+}
+
+// ============================================================
+// SAUVEGARDE DE LA SAISIE EN COURS (avant de changer de mode)
+// ============================================================
+function saveCurrentInputState() {
+    // On ne mémorise pas le texte tapé (non validé), seulement l'état
+    // répondu/non répondu, déjà tenu à jour par checkAnswer()/giveUp().
+}
+
+// ============================================================
+// RESTAURATION DE L'INTERFACE POUR UN MOT DÉJÀ RÉPONDU
+// (quand on revient sur un mode déjà terminé)
+// ============================================================
+function restoreAnsweredUI(mode) {
+    const state = modeState[mode];
+    answered = true;
+    stopRecognition();
+    stopAllSpeech();
+
+    const input = document.getElementById('answer-input');
+    input.value = '';
+    resetComp();
+    input.className = 'answer-input' + ((mode === 0 || mode === 2 || mode === 3) ? ' hangul-display-input' : '');
+    if (state.correct) input.classList.add('correct');
+    else input.classList.add('wrong');
+    input.disabled = true;
+    applyMobileInputMode(input);
+
+    document.getElementById('input-area').style.display = (mode === 4) ? 'none' : 'flex';
+
+    const feedback = document.getElementById('feedback');
+    feedback.className = 'feedback ' + (state.correct ? 'correct' : 'wrong');
+    feedback.innerHTML = state.feedbackHTML;
+
+    document.getElementById('continue-btn').style.display = 'block';
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('skip-btn').style.display = 'none';
+
+    renderWordDisplay();
+
+    if (mode !== 0 && mode !== 2 && mode !== 3) {
+        document.getElementById('keyboard-container').style.display = 'none';
+    } else {
+        document.getElementById('keyboard-container').style.display = 'block';
+        renderKeyboard();
+    }
+}
+
+// ============================================================
+// PRÉPARATION DE L'INTERFACE POUR LE MOT COURANT (nouvelle tentative)
+// ============================================================
+function setupUIForCurrentWord() {
+    answered = false;
+    stopRecognition();
+    stopAllSpeech();
+
+    const input = document.getElementById('answer-input');
+    input.value = '';
+    resetComp();
+    input.className = 'answer-input';
+    if (currentMode === 0 || currentMode === 2 || currentMode === 3) {
+        input.className = 'answer-input hangul-display-input';
+    }
+    input.disabled = false;
+    applyMobileInputMode(input);
+
+    document.getElementById('input-area').style.display = (currentMode === 4) ? 'none' : 'flex';
+
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('feedback').innerHTML = '';
+    document.getElementById('continue-btn').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'block';
+    document.getElementById('skip-btn').style.display = 'block';
+
+    renderWordDisplay();
+
+    if (currentMode !== 0 && currentMode !== 2 && currentMode !== 3) {
+        document.getElementById('keyboard-container').style.display = 'none';
+        if (currentMode !== 4) input.focus();
+    } else {
+        document.getElementById('keyboard-container').style.display = 'block';
+        renderKeyboard();
+    }
+
+    if (currentMode === 3) {
+        setTimeout(() => speakWord(), 300);
+    }
+}
+
+// ============================================================
+// EMPÊCHE LE CLAVIER NATIF DU TÉLÉPHONE DE S'OUVRIR
+// (en modes 2/3, la saisie se fait via le clavier coréen virtuel
+// à l'écran ou le clavier physique QWERTY en 2-beolsik : on rend le
+// champ "readonly" pour qu'il reste focusable/affichable sans faire
+// apparaître le clavier tactile du téléphone)
+// ============================================================
+function applyMobileInputMode(input) {
+    if (currentMode === 0 || currentMode === 2 || currentMode === 3) {
+        input.setAttribute('readonly', 'readonly');
+        input.setAttribute('inputmode', 'none');
+    } else {
+        input.removeAttribute('readonly');
+        input.removeAttribute('inputmode');
+    }
+}
+
+// ============================================================
+// AFFICHAGE DU MOT
+// ============================================================
+function renderWordDisplay() {
+    const wd = document.getElementById('word-display');
+    const desc = document.getElementById('mode-desc');
+    const input = document.getElementById('answer-input');
+
+    if (currentMode === 0) {
+        desc.textContent = "Lisez le son et écrivez le jamo (voyelle ou consonne) correspondant";
+        input.placeholder = "ex: ㅏ, ㄱ...";
+        wd.innerHTML = `
+            <div class="korean-word" style="font-size:2.8rem; color:#a8d8ea;">${currentWord.r}</div>
+            <div class="translation">Tapez la voyelle ou consonne coréenne (jamo) qui correspond à ce son</div>
+        `;
+    } else if (currentMode === 1) {
+        desc.textContent = "Lisez le mot coréen et écrivez sa romanisation (sons)";
+        input.placeholder = "ex: gomo, appa...";
+        wd.innerHTML = `
+            <div class="korean-word">${currentWord.k}</div>
+            <div class="translation">🇫🇷 ${currentWord.f}</div>
+        `;
+    } else if (currentMode === 2) {
+        desc.textContent = "Lisez la romanisation et écrivez le mot en hangeul";
+        input.placeholder = "Tapez en hangeul...";
+        wd.innerHTML = `
+            <div class="korean-word" style="font-size:2rem; color:#a8d8ea;">${currentWord.r}</div>
+            <div class="translation">🇫🇷 ${currentWord.f}</div>
+        `;
+    } else if (currentMode === 3) {
+        desc.textContent = "Écoutez l'audio et écrivez le mot en hangeul";
+        input.placeholder = "Tapez en hangeul...";
+        wd.innerHTML = `
+            <div class="audio-btn-row">
+                <button class="audio-btn" onclick="speakWord(1)">🔊 Écouter</button>
+                <button class="audio-btn audio-btn-slow" onclick="speakWord(0.5)">🐢 Écouter lentement</button>
+            </div>
+            <div class="translation">🇫🇷 ${currentWord.f}</div>
+            <div class="audio-notice" id="audio-notice"></div>
+        `;
+    } else if (currentMode === 4) {
+        desc.textContent = "Lisez le mot à voix haute, le micro vérifie votre prononciation";
+        wd.innerHTML = `
+            <div class="korean-word">${currentWord.k}</div>
+            <div class="translation">🇫🇷 ${currentWord.f} <small style="opacity:0.7;">(${currentWord.r})</small></div>
+            <div class="mic-row">
+                <button class="mic-btn" id="mic-btn" onclick="startPronunciationCheck()">🎤 Parler</button>
+            </div>
+            <div class="mic-status" id="mic-status"></div>
+        `;
+    }
+}
+
+// ============================================================
+// SYNTHÈSE VOCALE
+// ============================================================
+function speakWord(rate) {
+    // rate: 1 = vitesse normale, 0.5 = vitesse lente (pour une compréhension plus facile)
+    rate = rate || 1;
+    stopAllSpeech();
+    const myId = speechRequestId;
+    const useNative = synth && synth.getVoices().length && koreanVoice;
+
+    if (useNative) {
+        speakWithBrowserVoice(rate, myId);
+    } else {
+        speakWithOnlineFallback(rate, myId);
+    }
+}
+
+// Empêche deux voix de se chevaucher : coupe la synthèse native ET l'audio
+// en ligne en cours, et invalide (via speechRequestId) les callbacks
+// asynchrones d'une éventuelle lecture précédente encore en attente.
+function stopAllSpeech() {
+    speechRequestId++;
+    if (synth) {
+        try { synth.cancel(); } catch (e) {}
+    }
+    if (currentOnlineAudio) {
+        try { currentOnlineAudio.pause(); currentOnlineAudio.currentTime = 0; } catch (e) {}
+        currentOnlineAudio = null;
+    }
+}
+
+function speakWithBrowserVoice(rate, myId) {
+    rate = rate || 1;
+    showAudioNotice('');
+    // Certains navigateurs (notamment Brave) peuvent ignorer silencieusement un
+    // speak() appelé juste après cancel() : un petit délai évite ce souci.
+    setTimeout(() => {
+        if (myId !== speechRequestId) return; // une nouvelle demande a été faite entre-temps
+
+        const utt = new SpeechSynthesisUtterance(currentWord.k);
+        utt.lang = 'ko-KR';
+        utt.rate = rate;
+        if (koreanVoice) utt.voice = koreanVoice;
+
+        let started = false;
+        utt.onstart = () => { started = true; };
+        utt.onerror = (e) => {
+            if (myId !== speechRequestId) return;
+            console.warn('Erreur de synthèse vocale locale, bascule en ligne :', e.error);
+            speakWithOnlineFallback(rate, myId);
+        };
+        synth.speak(utt);
+
+        // Filet de sécurité : sur Brave, speak() reste parfois bloqué en pause.
+        setTimeout(() => {
+            if (myId !== speechRequestId) return;
+            if (synth.paused) synth.resume();
+        }, 100);
+
+        // Si la lecture native n'a jamais démarré après un court délai (bug
+        // connu de Brave où la synthèse vocale s'arrête de répondre), on
+        // bascule sur la voix en ligne. On vérifie "started" (et pas juste
+        // synth.speaking) pour éviter de déclencher les deux voix en même
+        // temps si la voix native démarre juste après ce délai.
+        setTimeout(() => {
+            if (myId !== speechRequestId) return;
+            if (!started && !synth.speaking && !synth.pending) {
+                speakWithOnlineFallback(rate, myId);
+            }
+        }, 700);
+    }, 60);
+}
+
+// Voix de secours en ligne : utilisée quand aucune voix coréenne n'est
+// installée localement (fréquent sur Brave/Chrome sans pack de langue coréen).
+// Nécessite une connexion internet.
+function speakWithOnlineFallback(rate, myId) {
+    rate = rate || 1;
+    if (myId !== speechRequestId) return;
+
+    // Coupe toute synthèse native qui aurait pu démarrer entre-temps, pour
+    // ne jamais entendre les deux voix (homme/femme) en même temps.
+    if (synth) {
+        try { synth.cancel(); } catch (e) {}
+    }
+
+    showAudioNotice('🌐 Utilisation de la voix coréenne en ligne (aucune voix locale détectée)...');
+    const url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=ko&client=tw-ob&q=' + encodeURIComponent(currentWord.k);
+    const audio = new Audio(url);
+    currentOnlineAudio = audio;
+    audio.playbackRate = rate;
+    audio.onplay = () => { if (myId === speechRequestId) showAudioNotice(''); };
+    audio.onerror = () => {
+        if (myId !== speechRequestId) return;
+        showAudioNotice("⚠️ Lecture audio impossible : aucune voix coréenne locale et pas d'accès à la voix en ligne (vérifiez votre connexion internet).");
+    };
+    audio.play().catch(() => {
+        if (myId !== speechRequestId) return;
+        showAudioNotice("⚠️ Lecture audio impossible : aucune voix coréenne locale et pas d'accès à la voix en ligne (vérifiez votre connexion internet).");
+    });
+}
+
+function showAudioNotice(msg) {
+    const el = document.getElementById('audio-notice');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+}
+
+// ============================================================
+// MODE 4 : VÉRIFICATION DE LA PRONONCIATION (reconnaissance vocale)
+// ============================================================
+let recognition = null;
+
+function getSpeechRecognitionClass() {
+    return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+}
+
+function stopRecognition() {
+    if (recognition) {
+        try { recognition.onresult = null; recognition.onerror = null; recognition.onend = null; recognition.abort(); } catch (e) {}
+        recognition = null;
+    }
+}
+
+function setMicStatus(msg) {
+    const el = document.getElementById('mic-status');
+    if (el) el.textContent = msg;
+}
+
+function startPronunciationCheck() {
+    if (answered || currentMode !== 4) return;
+
+    const SR = getSpeechRecognitionClass();
+    const micBtn = document.getElementById('mic-btn');
+
+    if (!SR) {
+        setMicStatus("⚠️ La reconnaissance vocale n'est pas disponible sur ce navigateur. Essayez avec Chrome (ordinateur ou Android).");
+        return;
+    }
+
+    stopRecognition();
+    recognition = new SR();
+    recognition.lang = 'ko-KR';
+    recognition.maxAlternatives = 5;
+    recognition.interimResults = false;
+
+    micBtn.disabled = true;
+    micBtn.textContent = '🎙️ Je vous écoute...';
+    setMicStatus('');
+
+    recognition.onresult = function (e) {
+        const results = e.results[0];
+        const alternatives = [];
+        for (let i = 0; i < results.length; i++) alternatives.push(results[i].transcript);
+        evaluatePronunciation(alternatives);
+    };
+
+    recognition.onerror = function (e) {
+        micBtn.disabled = false;
+        micBtn.textContent = '🎤 Parler';
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                setMicStatus("⚠️ Accès au micro refusé. Le micro nécessite une page servie en HTTPS (ou localhost) : ouvrir directement le fichier (file://) ne suffit pas. Sinon, vérifiez l'autorisation du micro pour ce site.");
+            } else {
+                setMicStatus("⚠️ Accès au micro refusé. Autorisez le micro pour ce site puis réessayez.");
+            }
+        } else if (e.error === 'no-speech') {
+            setMicStatus("🤔 Aucun son détecté, réessayez.");
+        } else {
+            setMicStatus("⚠️ Erreur de reconnaissance vocale (" + e.error + "). Réessayez.");
+        }
+    };
+
+    recognition.onend = function () {
+        micBtn.disabled = false;
+        micBtn.textContent = '🎤 Parler';
+    };
+
+    try {
+        recognition.start();
+    } catch (err) {
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            setMicStatus("⚠️ Impossible de démarrer le micro : cette page doit être servie en HTTPS (ou localhost) pour que le micro fonctionne.");
+        } else {
+            setMicStatus("⚠️ Impossible de démarrer le micro. Réessayez.");
+        }
+        micBtn.disabled = false;
+        micBtn.textContent = '🎤 Parler';
+    }
+}
+
+function normalizeKoreanSpeech(str) {
+    return str.replace(/[\s.,!?~？！。、'"]/g, '').toLowerCase();
+}
+
+function evaluatePronunciation(alternatives) {
+    if (answered || currentMode !== 4) return;
+    answered = true;
+    stats.total++;
+
+    stopRecognition();
+    document.getElementById('skip-btn').style.display = 'none';
+
+    const target = normalizeKoreanSpeech(currentWord.k);
+    const heard = alternatives[0] || '';
+    const isCorrect = alternatives.some(a => normalizeKoreanSpeech(a) === target);
+
+    const feedback = document.getElementById('feedback');
+
+    if (isCorrect) {
+        stats.correct++;
+        feedback.className = 'feedback correct';
+        feedback.innerHTML = `
+            <div class="feedback-icon">✅</div>
+            <strong>Excellent !</strong> Bonne prononciation !<br>
+            <small>Reconnu : "${heard}"</small>
+        `;
+    } else {
+        stats.wrong++;
+        feedback.className = 'feedback wrong';
+        feedback.innerHTML = `
+            <div class="feedback-icon">❌</div>
+            <strong>Pas tout à fait !</strong><br>
+            Mot attendu : <strong>${currentWord.k}</strong> (${currentWord.r})<br>
+            <small>Ce qui a été compris : "${heard || '(rien de compréhensible)'}"</small><br>
+            <small>💡 Réécoutez-vous et réessayez avec le prochain mot. La reconnaissance vocale peut aussi se tromper, ne vous inquiétez pas si vous êtes sûr(e) de votre prononciation.</small>
+        `;
+    }
+
+    setMicStatus('');
+    document.getElementById('continue-btn').style.display = 'block';
+    updateStats();
+}
+
+// ============================================================
+// VÉRIFICATION DE LA RÉPONSE
+// ============================================================
+function checkAnswer() {
+    if (answered) return;
+    const input = document.getElementById('answer-input');
+    const userAnswer = input.value.trim().toLowerCase();
+    if (!userAnswer) return;
+
+    answered = true;
+    stats.total++;
+    input.disabled = true;
+
+    const feedback = document.getElementById('feedback');
+    const continueBtn = document.getElementById('continue-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.style.display = 'none';
+    document.getElementById('skip-btn').style.display = 'none';
+
+    let isCorrect = false;
+
+    if (currentMode === 1) {
+        // Romanisation : accepter plusieurs variantes
+        const accepted = getAcceptedRomanizations(currentWord.r);
+        isCorrect = accepted.some(v => normalize(userAnswer) === normalize(v));
+    } else {
+        // Hangeul exact
+        isCorrect = userAnswer === currentWord.k;
+    }
+
+    if (isCorrect) {
+        stats.correct++;
+        input.classList.add('correct');
+        feedback.className = 'feedback correct';
+        feedback.innerHTML = `
+            <div class="feedback-icon">✅</div>
+            <strong>Excellent !</strong> Bonne réponse !
+        `;
+    } else {
+        stats.wrong++;
+        input.classList.add('wrong');
+        feedback.className = 'feedback wrong';
+
+        let explanation = '';
+        if (currentMode === 0) {
+            explanation = `Le bon jamo est : <strong>${currentWord.k}</strong> (son "${currentWord.r}")<br>
+            <small>${currentWord.f}</small><br>
+            <small>Votre réponse : "${userAnswer}"</small>`;
+        } else if (currentMode === 1) {
+            explanation = `La bonne romanisation est : <strong>${currentWord.r}</strong><br>
+            <small>Votre réponse : "${userAnswer}"</small><br>
+            <small>💡 ${getRomanizationExplanation(currentWord)}</small>`;
+        } else {
+            explanation = `Le bon hangeul est : <strong>${currentWord.k}</strong> (${currentWord.r})<br>
+            <small>Votre réponse : "${userAnswer}"</small>`;
+        }
+
+        feedback.innerHTML = `
+            <div class="feedback-icon">❌</div>
+            <strong>Pas tout à fait !</strong><br>${explanation}
+        `;
+    }
+
+    continueBtn.style.display = 'block';
+    updateStats();
+}
+
+// ============================================================
+// CHANGER DE MOT (abandon = compte comme une erreur)
+// ============================================================
+function giveUp() {
+    if (answered) return;
+    answered = true;
+    stats.total++;
+    stats.wrong++;
+
+    stopRecognition();
+    const input = document.getElementById('answer-input');
+    input.disabled = true;
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('skip-btn').style.display = 'none';
+    if (currentMode === 4) setMicStatus('');
+
+    const feedback = document.getElementById('feedback');
+    feedback.className = 'feedback wrong';
+
+    let explanation = '';
+    if (currentMode === 0) {
+        explanation = `Le bon jamo est : <strong>${currentWord.k}</strong> (son "${currentWord.r}")`;
+    } else if (currentMode === 1) {
+        explanation = `La bonne romanisation est : <strong>${currentWord.r}</strong><br>
+        <small>💡 ${getRomanizationExplanation(currentWord)}</small>`;
+    } else if (currentMode === 4) {
+        explanation = `Le mot à prononcer était : <strong>${currentWord.k}</strong> (${currentWord.r})`;
+    } else {
+        explanation = `Le bon hangeul est : <strong>${currentWord.k}</strong> (${currentWord.r})`;
+    }
+
+    feedback.innerHTML = `
+        <div class="feedback-icon">🚩</div>
+        <strong>Mot passé.</strong><br>
+        <small>${currentMode === 0 ? currentWord.f : 'Traduction : ' + currentWord.f}</small><br>
+        ${explanation}
+    `;
+
+    document.getElementById('continue-btn').style.display = 'block';
+    updateStats();
+}
+
+function normalize(str) {
+    return str.toLowerCase().replace(/[\s\-]/g, '');
+}
+
+function getAcceptedRomanizations(r) {
+    const variants = [r];
+    // Variantes courantes g/k, d/t, b/p, j/ch, r/l
+    const swaps = [
+        ['g','k'],['k','g'],
+        ['d','t'],['t','d'],
+        ['b','p'],['p','b'],
+        ['j','ch'],['ch','j'],
+        ['r','l'],['l','r'],
+        ['eo','o'],['o','eo'],
+        ['eu','u'],['u','eu'],
+        ['ae','e'],['e','ae'],
+    ];
+    swaps.forEach(([a, b]) => {
+        if (r.includes(a)) variants.push(r.replace(new RegExp(a, 'g'), b));
+    });
+    return [...new Set(variants)];
+}
+
+function getRomanizationExplanation(word) {
+    const explanations = {
+        'eo': "eo = son entre 'o' et 'e' en coréen (ㅓ)",
+        'eu': "eu = son neutre, comme un 'u' non arrondi (ㅡ)",
+        'ae': "ae = son proche de 'e' ouvert (ㅐ)",
+        'oe': "oe = voyelle composée (ㅚ)",
+        'ui': "ui = voyelle composée (ㅢ)",
+        'ng': "ng = son nasal final (ㅇ en position finale)",
+    };
+    for (const [pattern, exp] of Object.entries(explanations)) {
+        if (word.r.includes(pattern)) return exp;
+    }
+    return "Attention à la prononciation des consonnes et voyelles coréennes.";
+}
+
+// ============================================================
+// STATISTIQUES
+// ============================================================
+function updateStats() {
+    document.getElementById('score-correct').textContent = stats.correct;
+    document.getElementById('score-wrong').textContent = stats.wrong;
+    document.getElementById('score-total').textContent = stats.total;
+    const pct = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+    document.getElementById('score-pct').textContent = pct + '%';
+}
+
+function updateProgress() {
+    const pct = currentMode === 0
+        ? (jamoUsedIndices.length / jamoList.length) * 100
+        : (usedIndices.length / words.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ============================================================
+// CLAVIER CORÉEN VIRTUEL
+// ============================================================
+function switchKbTab(tab) {
+    currentKbTab = tab;
+    document.querySelectorAll('.kb-tab').forEach((t, i) => {
+        t.classList.toggle('active', ['initial','vowel','final'][i] === tab);
+    });
+    renderKeyboard();
+}
+
+function renderKeyboard() {
+    const container = document.getElementById('keyboard-keys');
+    const data = keyboard[currentKbTab];
+    let html = '';
+
+    data.keys.forEach(row => {
+        html += '<div class="keyboard-row">';
+        row.forEach(key => {
+            html += `<button class="key" onclick="typeHangul('${key}')">${key}</button>`;
+        });
+        html += '</div>';
+    });
+
+    html += `<div class="keyboard-row">
+        <button class="key special" onclick="deleteHangul()">⌫ Suppr</button>
+        <button class="key space-key" onclick="typeHangul(' ')">Espace</button>
+        <button class="key special" onclick="clearInput()">✕ Effacer</button>
+    </div>`;
+
+    container.innerHTML = html;
+}
+
+function typeHangul(char) {
+    const input = document.getElementById('answer-input');
+    if (input.disabled) return;
+
+    // Mode 0 : on veut le jamo brut (ex: ㅏ), pas une syllabe composée (ex: 아)
+    if (currentMode === 0) {
+        if (char === ' ') return;
+        input.value = char;
+        input.focus();
+        return;
+    }
+
+    if (char === ' ') {
+        commitCurrentBlock();
+        input.value += ' ';
+        input.focus();
+        return;
+    }
+
+    if (JUNG.includes(char)) {
+        handleVowel(char);
+    } else {
+        handleConsonant(char);
+    }
+
+    autoSwitchTab();
+    input.focus();
+}
+
+function deleteHangul() {
+    const input = document.getElementById('answer-input');
+    if (input.disabled) return;
+    if (input.value.length === 0) return;
+
+    if (currentMode === 0) {
+        input.value = '';
+        return;
+    }
+
+    if (compState.jong !== null) {
+        const decomp = JONG_DECOMPOSE[compState.jong];
+        compState.jong = decomp ? decomp[0] : null;
+        rerenderLastBlock();
+    } else if (compState.jung !== null) {
+        const revert = VOWEL_DECOMPOSE[compState.jung];
+        if (revert) {
+            compState.jung = revert;
+        } else {
+            compState.jung = null;
+        }
+        rerenderLastBlock();
+    } else if (compState.cho !== null) {
+        resetComp();
+        input.value = input.value.slice(0, -1);
+    } else {
+        input.value = input.value.slice(0, -1);
+    }
+}
+
+function clearInput() {
+    const input = document.getElementById('answer-input');
+    if (input.disabled) return;
+    input.value = '';
+    resetComp();
+}
+
+// ============================================================
+// ÉVÉNEMENTS CLAVIER
+// ============================================================
+document.getElementById('answer-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        if (!answered) {
+            checkAnswer();
+        } else {
+            nextWord();
+        }
+        return;
+    }
+
+    // Clavier physique en disposition coréenne (2-beolsik) pour les modes hangeul
+    if ((currentMode === 0 || currentMode === 2 || currentMode === 3) && !answered) {
+        if (e.isComposing || e.metaKey || e.ctrlKey || e.altKey) return;
+
+        if (e.key === 'Backspace') {
+            e.preventDefault();
+            deleteHangul();
+            return;
+        }
+        if (currentMode === 0 && e.key === ' ') {
+            e.preventDefault();
+            return;
+        }
+        if (e.key === ' ') {
+            e.preventDefault();
+            typeHangul(' ');
+            return;
+        }
+        if (e.key.length === 1) {
+            e.preventDefault();
+            const mapped = QWERTY_TO_HANGUL[e.key];
+            if (mapped) typeHangul(mapped);
+        }
+    }
+});
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+nextWord();
+</script>
+</body>
+</html>
