@@ -2280,6 +2280,39 @@ const words = [
 // ============================================================
 // JAMO (voyelles / consonnes) - pour le Mode 0
 // ============================================================
+// ============================================================
+// NOMS CORÉENS DES CONSONNES (자음 이름)
+// Chaque consonne a un nom officiel en coréen (ex: ㄴ = 니은 "Nieun")
+// utilisé pour aider à mémoriser sa prononciation.
+// ============================================================
+const JAMO_NAMES = {
+    "ㄱ": "Giyeok",
+    "ㄴ": "Nieun",
+    "ㄷ": "Digeut",
+    "ㄹ": "Rieul",
+    "ㅁ": "Mieum",
+    "ㅂ": "Bieup",
+    "ㅅ": "Siot",
+    "ㅇ": "Ieung",
+    "ㅈ": "Jieut",
+    "ㅊ": "Chieut",
+    "ㅋ": "Kieuk",
+    "ㅌ": "Tieut",
+    "ㅍ": "Pieup",
+    "ㅎ": "Hieut",
+    "ㄲ": "Ssanggiyeok",
+    "ㄸ": "Ssangdigeut",
+    "ㅃ": "Ssangbieup",
+    "ㅆ": "Ssangsiot",
+    "ㅉ": "Ssangjieut"
+};
+
+function jamoNameLine(consonne) {
+    const nom = JAMO_NAMES[consonne];
+    if (!nom) return '';
+    return `<div class="romanization-hint" style="margin-top:10px;">Prononcé <strong>${nom}</strong></div>`;
+}
+
 const jamoList = [
   // Consonnes de base (자음)
   {k:"ㄱ",r:"g/k",f:"Consonne 'g/k'",type:"consonne"},
@@ -2345,7 +2378,8 @@ for (let ci = 0; ci < SYL_CHO.length; ci++) {
             k: String.fromCharCode(code),
             r: SYL_CHO_ROMAN[ci] + SYL_JUNG_ROMAN[vi],
             f: `Syllabe : ${SYL_CHO[ci]} + ${SYL_JUNG[vi]}`,
-            type: "syllabe"
+            type: "syllabe",
+            cho: SYL_CHO[ci]
         });
     }
 }
@@ -2880,7 +2914,11 @@ function setupUIForCurrentWord() {
 
     // Lecture automatique de la voix synthétique pour les modes jamo (0),
     // syllabe (1) et audio (4) — répétable via le bouton "🔊 Écouter".
-    if (currentMode === 0 || currentMode === 1 || currentMode === 4) {
+    // En modes 0 et 1, on ajoute 1 sec de délai supplémentaire (uniquement
+    // pour cette première lecture automatique) car le son était parfois coupé.
+    if (currentMode === 0 || currentMode === 1) {
+        setTimeout(() => speakWord(), 1300);
+    } else if (currentMode === 4) {
         setTimeout(() => speakWord(), 300);
     }
 }
@@ -2916,6 +2954,7 @@ function renderWordDisplay() {
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
             <button class="audio-btn" onclick="speakWord()">🔊 Écouter</button>
+            ${jamoNameLine(currentWord.k)}
         `;
     } else if (currentMode === 1) {
         desc.textContent = "Tapez la syllabe coréenne (consonne+voyelle) qui correspond à ce son";
@@ -2923,6 +2962,7 @@ function renderWordDisplay() {
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
             <button class="audio-btn" onclick="speakWord()">🔊 Écouter</button>
+            ${jamoNameLine(currentWord.cho)}
         `;
     } else if (currentMode === 2) {
         desc.textContent = "Lisez le mot coréen et écrivez sa romanisation (sons)";
