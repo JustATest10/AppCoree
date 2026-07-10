@@ -2917,7 +2917,7 @@ function setupUIForCurrentWord() {
     // En modes 0 et 1, on ajoute 1 sec de délai supplémentaire (uniquement
     // pour cette première lecture automatique) car le son était parfois coupé.
     if (currentMode === 0 || currentMode === 1) {
-        setTimeout(() => speakWord(), 1300);
+        setTimeout(() => speakWord(), 900);
     } else if (currentMode === 4) {
         setTimeout(() => speakWord(), 300);
     }
