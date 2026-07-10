@@ -2994,7 +2994,6 @@ function renderWordDisplay() {
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
             <button class="audio-btn" onclick="speakWord()">🔊 Écouter</button>
-            ${jamoNameLine(currentWord.cho)}
         `;
     } else if (currentMode === 2) {
         desc.textContent = "Lisez le mot coréen et écrivez sa romanisation (sons)";
