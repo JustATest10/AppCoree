@@ -825,17 +825,20 @@
     <button class="mode-btn" onclick="setMode(0)">
         Mode 0<br><small>Voyelle/Consonne</small>
     </button>
-    <button class="mode-btn active" onclick="setMode(1)">
-        Mode 1<br><small>한글 → Son</small>
+    <button class="mode-btn" onclick="setMode(1)">
+        Mode 1<br><small>Syllabe (Cons.+Voy.)</small>
     </button>
-    <button class="mode-btn" onclick="setMode(2)">
-        Mode 2<br><small>Son → 한글</small>
+    <button class="mode-btn active" onclick="setMode(2)">
+        Mode 2<br><small>한글 → Son</small>
     </button>
     <button class="mode-btn" onclick="setMode(3)">
-        Mode 3<br><small>🔊 Audio → 한글</small>
+        Mode 3<br><small>Son → 한글</small>
     </button>
     <button class="mode-btn" onclick="setMode(4)">
-        Mode 4<br><small>🎤 Prononciation</small>
+        Mode 4<br><small>🔊 Audio → 한글</small>
+    </button>
+    <button class="mode-btn" onclick="setMode(5)">
+        Mode 5<br><small>🎤 Prononciation</small>
     </button>
 </div>
 
@@ -879,6 +882,10 @@
     <div class="stat-item">
         <div class="stat-value" id="score-pct-mode-4">0%</div>
         <div>Mode 4</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="score-pct-mode-5">0%</div>
+        <div>Mode 5</div>
     </div>
 </div>
 
@@ -2321,6 +2328,29 @@ const jamoList = [
 ];
 
 // ============================================================
+// SYLLABES CONSONNE+VOYELLE (자음+모음) - pour le Mode 1
+// Générées automatiquement : toutes les combinaisons consonne
+// initiale x voyelle (sans batchim), ex: ㅍ + ㅐ = 패 (pae)
+// ============================================================
+const SYL_CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const SYL_CHO_ROMAN = ['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
+const SYL_JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const SYL_JUNG_ROMAN = ['a','ae','ya','yae','eo','e','yeo','ye','o','wa','wae','oe','yo','u','wo','we','wi','yu','eu','ui','i'];
+
+const syllableList = [];
+for (let ci = 0; ci < SYL_CHO.length; ci++) {
+    for (let vi = 0; vi < SYL_JUNG.length; vi++) {
+        const code = 0xAC00 + ci * 588 + vi * 28; // batchim = 0 (pas de finale)
+        syllableList.push({
+            k: String.fromCharCode(code),
+            r: SYL_CHO_ROMAN[ci] + SYL_JUNG_ROMAN[vi],
+            f: `Syllabe : ${SYL_CHO[ci]} + ${SYL_JUNG[vi]}`,
+            type: "syllabe"
+        });
+    }
+}
+
+// ============================================================
 // CLAVIER CORÉEN VIRTUEL
 // ============================================================
 const keyboard = {
@@ -2351,10 +2381,11 @@ const keyboard = {
 // ============================================================
 // ÉTAT DE L'APPLICATION
 // ============================================================
-let currentMode = 1;
+let currentMode = 2;
 let currentWord = null;
 let usedIndices = [];
 let jamoUsedIndices = [];
+let syllableUsedIndices = [];
 let answered = false;
 let stats = { correct: 0, wrong: 0, total: 0 };
 let modeStats = {
@@ -2362,7 +2393,8 @@ let modeStats = {
     1: { correct: 0, wrong: 0, total: 0 },
     2: { correct: 0, wrong: 0, total: 0 },
     3: { correct: 0, wrong: 0, total: 0 },
-    4: { correct: 0, wrong: 0, total: 0 }
+    4: { correct: 0, wrong: 0, total: 0 },
+    5: { correct: 0, wrong: 0, total: 0 }
 };
 
 // ============================================================
@@ -2421,15 +2453,15 @@ function updateThemeFilterSummary() {
 function applyThemeChangeAndRefresh() {
     computeActiveWordIndices();
     usedIndices = [];
-    // On force un nouveau mot pour chaque mode basé sur des mots (modes 1 à 4),
-    // le mode 0 (voyelles/consonnes) n'est pas concerné par les thèmes.
-    for (let mode = 1; mode <= 4; mode++) {
+    // On force un nouveau mot pour chaque mode basé sur des mots (modes 2 à 5),
+    // les modes 0 et 1 (voyelles/consonnes/syllabes) ne sont pas concernés par les thèmes.
+    for (let mode = 2; mode <= 5; mode++) {
         modeState[mode].word = null;
         modeState[mode].answered = false;
         modeState[mode].correct = null;
         modeState[mode].feedbackHTML = '';
     }
-    if (currentMode !== 0) {
+    if (currentMode !== 0 && currentMode !== 1) {
         const state = modeState[currentMode];
         state.word = pickWordForMode(currentMode);
         currentWord = state.word;
@@ -2477,7 +2509,8 @@ let modeState = {
     1: { word: null, answered: false, correct: null, feedbackHTML: '' },
     2: { word: null, answered: false, correct: null, feedbackHTML: '' },
     3: { word: null, answered: false, correct: null, feedbackHTML: '' },
-    4: { word: null, answered: false, correct: null, feedbackHTML: '' }
+    4: { word: null, answered: false, correct: null, feedbackHTML: '' },
+    5: { word: null, answered: false, correct: null, feedbackHTML: '' }
 };
 let synth = window.speechSynthesis;
 let koreanVoice = null;
@@ -2710,13 +2743,25 @@ function pickWordForMode(mode) {
         return jamoList[jIdx];
     }
 
+    if (mode === 1) {
+        if (syllableUsedIndices.length >= syllableList.length) {
+            syllableUsedIndices = [];
+        }
+        let sIdx;
+        do {
+            sIdx = Math.floor(Math.random() * syllableList.length);
+        } while (syllableUsedIndices.includes(sIdx));
+        syllableUsedIndices.push(sIdx);
+        return syllableList[sIdx];
+    }
+
     if (usedIndices.length >= activeWordIndices.length) {
         usedIndices = [];
     }
 
     const otherWordKeys = new Set(
         Object.keys(modeState)
-            .filter(m => Number(m) !== mode && Number(m) !== 0)
+            .filter(m => Number(m) !== mode && Number(m) !== 0 && Number(m) !== 1)
             .map(m => modeState[m].word)
             .filter(Boolean)
             .map(w => w.k)
@@ -2771,13 +2816,13 @@ function restoreAnsweredUI(mode) {
     const input = document.getElementById('answer-input');
     input.value = '';
     resetComp();
-    input.className = 'answer-input' + ((mode === 0 || mode === 2 || mode === 3) ? ' hangul-display-input' : '');
+    input.className = 'answer-input' + ((mode === 0 || mode === 1 || mode === 3 || mode === 4) ? ' hangul-display-input' : '');
     if (state.correct) input.classList.add('correct');
     else input.classList.add('wrong');
     input.disabled = true;
     applyMobileInputMode(input);
 
-    document.getElementById('input-area').style.display = (mode === 4) ? 'none' : 'flex';
+    document.getElementById('input-area').style.display = (mode === 5) ? 'none' : 'flex';
 
     const feedback = document.getElementById('feedback');
     feedback.className = 'feedback ' + (state.correct ? 'correct' : 'wrong');
@@ -2789,7 +2834,7 @@ function restoreAnsweredUI(mode) {
 
     renderWordDisplay();
 
-    if (mode !== 0 && mode !== 2 && mode !== 3) {
+    if (mode !== 0 && mode !== 1 && mode !== 3 && mode !== 4) {
         document.getElementById('keyboard-container').style.display = 'none';
     } else {
         document.getElementById('keyboard-container').style.display = 'block';
@@ -2809,13 +2854,13 @@ function setupUIForCurrentWord() {
     input.value = '';
     resetComp();
     input.className = 'answer-input';
-    if (currentMode === 0 || currentMode === 2 || currentMode === 3) {
+    if (currentMode === 0 || currentMode === 1 || currentMode === 3 || currentMode === 4) {
         input.className = 'answer-input hangul-display-input';
     }
     input.disabled = false;
     applyMobileInputMode(input);
 
-    document.getElementById('input-area').style.display = (currentMode === 4) ? 'none' : 'flex';
+    document.getElementById('input-area').style.display = (currentMode === 5) ? 'none' : 'flex';
 
     document.getElementById('feedback').className = 'feedback';
     document.getElementById('feedback').innerHTML = '';
@@ -2825,15 +2870,17 @@ function setupUIForCurrentWord() {
 
     renderWordDisplay();
 
-    if (currentMode !== 0 && currentMode !== 2 && currentMode !== 3) {
+    if (currentMode !== 0 && currentMode !== 1 && currentMode !== 3 && currentMode !== 4) {
         document.getElementById('keyboard-container').style.display = 'none';
-        if (currentMode !== 4) input.focus();
+        if (currentMode !== 5) input.focus();
     } else {
         document.getElementById('keyboard-container').style.display = 'block';
         renderKeyboard();
     }
 
-    if (currentMode === 3) {
+    // Lecture automatique de la voix synthétique pour les modes jamo (0),
+    // syllabe (1) et audio (4) — répétable via le bouton "🔊 Écouter".
+    if (currentMode === 0 || currentMode === 1 || currentMode === 4) {
         setTimeout(() => speakWord(), 300);
     }
 }
@@ -2846,7 +2893,7 @@ function setupUIForCurrentWord() {
 // apparaître le clavier tactile du téléphone)
 // ============================================================
 function applyMobileInputMode(input) {
-    if (currentMode === 0 || currentMode === 2 || currentMode === 3) {
+    if (currentMode === 0 || currentMode === 1 || currentMode === 3 || currentMode === 4) {
         input.setAttribute('readonly', 'readonly');
         input.setAttribute('inputmode', 'none');
     } else {
@@ -2868,22 +2915,30 @@ function renderWordDisplay() {
         input.placeholder = "ex: ㅏ, ㄱ...";
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
+            <button class="audio-btn" onclick="speakWord()">🔊 Écouter</button>
         `;
     } else if (currentMode === 1) {
+        desc.textContent = "Tapez la syllabe coréenne (consonne+voyelle) qui correspond à ce son";
+        input.placeholder = "Tapez en hangeul...";
+        wd.innerHTML = `
+            <div class="korean-word" style="font-size:2.8rem; color:var(--blue);">${currentWord.r}</div>
+            <button class="audio-btn" onclick="speakWord()">🔊 Écouter</button>
+        `;
+    } else if (currentMode === 2) {
         desc.textContent = "Lisez le mot coréen et écrivez sa romanisation (sons)";
         input.placeholder = "ex: gomo, appa...";
         wd.innerHTML = `
             <div class="korean-word">${currentWord.k}</div>
             <div class="translation">🇫🇷 ${currentWord.f}</div>
         `;
-    } else if (currentMode === 2) {
+    } else if (currentMode === 3) {
         desc.textContent = "Lisez la romanisation et écrivez le mot en hangeul";
         input.placeholder = "Tapez en hangeul...";
         wd.innerHTML = `
             <div class="korean-word" style="font-size:2rem; color:var(--blue);">${currentWord.r}</div>
             <div class="translation">🇫🇷 ${currentWord.f}</div>
         `;
-    } else if (currentMode === 3) {
+    } else if (currentMode === 4) {
         desc.textContent = "Écoutez l'audio et écrivez le mot en hangeul";
         input.placeholder = "Tapez en hangeul...";
         wd.innerHTML = `
@@ -2900,7 +2955,7 @@ function renderWordDisplay() {
             <div class="translation">🇫🇷 ${currentWord.f}</div>
             <div class="audio-notice" id="audio-notice"></div>
         `;
-    } else if (currentMode === 4) {
+    } else if (currentMode === 5) {
         desc.textContent = "Lisez le mot à voix haute, le micro vérifie votre prononciation";
         wd.innerHTML = `
             <div class="korean-word">${currentWord.k}</div>
@@ -3115,7 +3170,7 @@ async function startMicLevelMeter() {
     }
 
     // La page a pu changer de mode pendant l'attente de la permission
-    if (currentMode !== 4) {
+    if (currentMode !== 5) {
         stopMicLevelMeter();
         return;
     }
@@ -3154,7 +3209,7 @@ function setMicStatus(msg) {
 }
 
 function startPronunciationCheck() {
-    if (currentMode !== 4) return;
+    if (currentMode !== 5) return;
 
     const micBtn = document.getElementById('mic-btn');
 
@@ -3243,7 +3298,7 @@ function normalizeKoreanSpeech(str) {
 }
 
 function evaluatePronunciation(alternatives) {
-    if (answered || currentMode !== 4) return;
+    if (answered || currentMode !== 5) return;
 
     stopRecognition();
 
@@ -3312,12 +3367,12 @@ function checkAnswer() {
 
     let isCorrect = false;
 
-    if (currentMode === 1) {
+    if (currentMode === 2) {
         // Romanisation : accepter plusieurs variantes
         const accepted = getAcceptedRomanizations(currentWord.r);
         isCorrect = accepted.some(v => normalize(userAnswer) === normalize(v));
     } else {
-        // Hangeul exact
+        // Hangeul exact (jamo, syllabe ou mot)
         isCorrect = userAnswer === currentWord.k;
     }
 
@@ -3340,6 +3395,10 @@ function checkAnswer() {
             <small>${currentWord.f}</small><br>
             <small>Votre réponse : "${userAnswer}"</small>`;
         } else if (currentMode === 1) {
+            explanation = `La bonne syllabe est : <strong>${currentWord.k}</strong> (son "${currentWord.r}")<br>
+            <small>${currentWord.f}</small><br>
+            <small>Votre réponse : "${userAnswer}"</small>`;
+        } else if (currentMode === 2) {
             explanation = `La bonne romanisation est : <strong>${currentWord.r}</strong><br>
             <small>Votre réponse : "${userAnswer}"</small><br>
             <small>💡 ${getRomanizationExplanation(currentWord)}</small>`;
@@ -3371,7 +3430,7 @@ function giveUp() {
     input.disabled = true;
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('skip-btn').style.display = 'none';
-    if (currentMode === 4) setMicStatus('');
+    if (currentMode === 5) setMicStatus('');
 
     const feedback = document.getElementById('feedback');
     feedback.className = 'feedback wrong';
@@ -3380,9 +3439,11 @@ function giveUp() {
     if (currentMode === 0) {
         explanation = `Le bon jamo est : <strong>${currentWord.k}</strong> (son "${currentWord.r}")`;
     } else if (currentMode === 1) {
+        explanation = `La bonne syllabe est : <strong>${currentWord.k}</strong> (son "${currentWord.r}")`;
+    } else if (currentMode === 2) {
         explanation = `La bonne romanisation est : <strong>${currentWord.r}</strong><br>
         <small>💡 ${getRomanizationExplanation(currentWord)}</small>`;
-    } else if (currentMode === 4) {
+    } else if (currentMode === 5) {
         explanation = `Le mot à prononcer était : <strong>${currentWord.k}</strong> (${currentWord.r})`;
     } else {
         explanation = `Le bon hangeul est : <strong>${currentWord.k}</strong> (${currentWord.r})`;
@@ -3391,7 +3452,7 @@ function giveUp() {
     feedback.innerHTML = `
         <div class="feedback-icon">🚩</div>
         <strong>Mot passé.</strong><br>
-        <small>${currentMode === 0 ? currentWord.f : 'Traduction : ' + currentWord.f}</small><br>
+        <small>${(currentMode === 0 || currentMode === 1) ? currentWord.f : 'Traduction : ' + currentWord.f}</small><br>
         ${explanation}
     `;
 
@@ -3459,7 +3520,7 @@ function updateStats() {
     // Barre 1 : réussite globale (tous modes confondus) + réussite par mode
     const globalPct = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
     setPctWithColor('score-pct', globalPct);
-    for (let mode = 0; mode <= 4; mode++) {
+    for (let mode = 0; mode <= 5; mode++) {
         const m = modeStats[mode];
         const modePct = m.total > 0 ? Math.round((m.correct / m.total) * 100) : 0;
         setPctWithColor('score-pct-mode-' + mode, modePct);
@@ -3469,10 +3530,11 @@ function updateStats() {
 
 const MODE_NAMES = {
     0: 'Voyelle/Consonne',
-    1: '한글 → Son',
-    2: 'Son → 한글',
-    3: '🔊 Audio → 한글',
-    4: '🎤 Prononciation'
+    1: 'Syllabe (Consonne+Voyelle)',
+    2: '한글 → Son',
+    3: 'Son → 한글',
+    4: '🔊 Audio → 한글',
+    5: '🎤 Prononciation'
 };
 
 function updateModeStatsDisplay() {
@@ -3491,9 +3553,14 @@ function updateModeStatsDisplay() {
 }
 
 function updateProgress() {
-    const pct = currentMode === 0
-        ? (jamoUsedIndices.length / jamoList.length) * 100
-        : (usedIndices.length / activeWordIndices.length) * 100;
+    let pct;
+    if (currentMode === 0) {
+        pct = (jamoUsedIndices.length / jamoList.length) * 100;
+    } else if (currentMode === 1) {
+        pct = (syllableUsedIndices.length / syllableList.length) * 100;
+    } else {
+        pct = (usedIndices.length / activeWordIndices.length) * 100;
+    }
     document.getElementById('progress-fill').style.width = pct + '%';
 }
 
@@ -3610,7 +3677,7 @@ document.getElementById('answer-input').addEventListener('keydown', function(e) 
     }
 
     // Clavier physique en disposition coréenne (2-beolsik) pour les modes hangeul
-    if ((currentMode === 0 || currentMode === 2 || currentMode === 3) && !answered) {
+    if ((currentMode === 0 || currentMode === 1 || currentMode === 3 || currentMode === 4) && !answered) {
         if (e.isComposing || e.metaKey || e.ctrlKey || e.altKey) return;
 
         if (e.key === 'Backspace') {
