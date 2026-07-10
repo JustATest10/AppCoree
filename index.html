@@ -770,6 +770,17 @@
             transition: width 0.4s ease;
         }
 
+        /* ============================================================
+           TOUCHE CORÉENNE : drapeau
+           ============================================================ */
+        .flag-icon {
+            width: 46px;
+            height: auto;
+            flex-shrink: 0;
+            border-radius: 3px;
+            box-shadow: 0 1px 5px var(--shadow);
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .main-card {
@@ -816,6 +827,27 @@
 
 <header>
     <div class="header-inner">
+        <svg class="flag-icon" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drapeau de la Corée du Sud">
+            <rect x="0" y="0" width="300" height="200" fill="#FFFFFF"/>
+            <path d="M150,60 A40,40 0 0,1 150,140 A20,20 0 0,1 150,100 A20,20 0 0,0 150,60 Z" fill="var(--red)"/>
+            <path d="M150,140 A40,40 0 0,1 150,60 A20,20 0 0,1 150,100 A20,20 0 0,0 150,140 Z" fill="var(--blue)"/>
+            <circle cx="150" cy="80" r="10" fill="var(--blue)"/>
+            <circle cx="150" cy="120" r="10" fill="var(--red)"/>
+            <g fill="#111111">
+                <rect x="35" y="45" width="34" height="6"/>
+                <rect x="35" y="58" width="34" height="6"/>
+                <rect x="35" y="71" width="34" height="6"/>
+                <rect x="231" y="123" width="14" height="6"/><rect x="251" y="123" width="14" height="6"/>
+                <rect x="231" y="136" width="14" height="6"/><rect x="251" y="136" width="14" height="6"/>
+                <rect x="231" y="149" width="14" height="6"/><rect x="251" y="149" width="14" height="6"/>
+                <rect x="231" y="45" width="14" height="6"/><rect x="251" y="45" width="14" height="6"/>
+                <rect x="231" y="58" width="34" height="6"/>
+                <rect x="231" y="71" width="14" height="6"/><rect x="251" y="71" width="14" height="6"/>
+                <rect x="35" y="123" width="34" height="6"/>
+                <rect x="35" y="136" width="14" height="6"/><rect x="55" y="136" width="14" height="6"/>
+                <rect x="35" y="149" width="34" height="6"/>
+            </g>
+        </svg>
         <h1>Apprendre le Coréen</h1>
     </div>
     <div class="header-subtitle">한국어를 배우다</div>
